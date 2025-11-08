@@ -2,6 +2,7 @@
 import { useToast, POSITION } from 'vue-toastification'
 const { $axios } = useNuxtApp()
 const token = useCookie('token')
+const router = useRouter()
 export interface User {
     branch: boolean | string
     code: null | string
@@ -23,6 +24,11 @@ const perPage = 20
 const removeSearchButton = ref<boolean>(false)
 
 const searchValue = ref<string>("")
+
+
+const routeToEdit = (id: number) => {
+    router.push(`edit/${id}`)
+}
 
 const paginatedUsers = computed(() => {
     if (!users) {
@@ -210,7 +216,7 @@ onMounted(() => {
                                     v-if="user.role === 'user'">
                                     {{ user.isActive ? 'Деактировать' : 'Активировать' }}
                                 </button>
-                                <button
+                                <button @click="routeToEdit(user.id)"
                                     class="tw-bg-[#0891B2] tw-px-2 tw-rounded-md tw-text-white tw-text-[14px]">изм.</button>
                                 <button @click="deleteUser(user.id)"
                                     class="tw-bg-red-600 tw-px-2 tw-rounded-md tw-text-white tw-text-[14px]">уд.</button>

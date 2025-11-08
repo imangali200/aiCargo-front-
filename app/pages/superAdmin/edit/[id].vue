@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Branch } from '../auth/register.vue'
+import type { Branch } from "~/pages/auth/register.vue";
 
 const { $axios } = useNuxtApp()
 import { useToast, POSITION } from "vue-toastification";
@@ -16,6 +16,9 @@ const role = ref<string>('superAdmin')
 const token = useCookie('token')
 
 const router = useRouter()
+const route = useRoute()
+const id = route.params.id
+console.log(id)
 
 const branches = ref<Branch[]>([])
 
@@ -28,6 +31,21 @@ async function getBranches() {
     const res = await $axios.get('branch')
     branches.value = res.data
 }
+
+async function getUserById() {
+    try {
+        const UserData = await $axios(`user/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token.value}`
+            }
+        })
+        console.log(UserData.data)
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
 const createUser = async () => {
     if (
         !phoneNumber.value ||
@@ -58,9 +76,9 @@ const createUser = async () => {
                 position: "top-center" as POSITION,
                 timeout: 3000
             })
-        }else{
-            toast.warning('Не удалось добавить пользователя',{
-                position:'top-center' as POSITION
+        } else {
+            toast.warning('Не удалось добавить пользователя', {
+                position: 'top-center' as POSITION
             })
         }
 
@@ -72,7 +90,8 @@ const createUser = async () => {
 
 }
 onMounted(() => {
-    getBranches()
+    getBranches(),
+        getUserById()
 })
 </script>
 
@@ -83,7 +102,7 @@ onMounted(() => {
             <p>⤑</p>
             <routerLink class="tw-text-blue-600 hover:tw-underline" to="/superAdmin/users">Пользователи</routerLink>
             <p>⤑</p>
-            <p class="tw-text-gray-400">Добавить пользователь</p>
+            <p class="tw-text-gray-400">Изменить пользователь: Super</p>
         </div>
         <div class="tw-flex tw-items-center tw-justify-between tw-mt-5 tw-border-b-[1px] tw-border-gray-200 tw-pb-5">
             <span class="tw-text-[18px] tw-font-[500]">Добавить пользователь</span>
