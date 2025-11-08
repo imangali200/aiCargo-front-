@@ -60,7 +60,7 @@ definePageMeta({
   layout: "auth",
 });
 
-interface Branch {
+export interface Branch {
   branchName: string,
   deleteAt: string,
   id: number,

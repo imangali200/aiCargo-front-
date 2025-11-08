@@ -10,7 +10,7 @@
     "isolatedModules": true,
     "noEmit": true,
     
-    "types": ["nuxt", "@types/node"]
+    "types": ["nuxt", "@types/node","vue-toastification"]
   },
   "files": [],
   "references": [
