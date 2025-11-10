@@ -182,7 +182,7 @@ onMounted(() => {
                 </thead>
                 <tbody>
                     <tr v-for="user in paginatedUsers" :key="user.id" class="hover:tw-bg-gray-100">
-                        <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2 tw-w=[20px]">{{ user.id
+                        <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2 tw-w-[20px]">{{ user.id
                         }}</td>
                         <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2 tw-w-[150px]">{{
                             user.code }}</td>
@@ -195,15 +195,13 @@ onMounted(() => {
                         <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ user.password }}</td>
                         <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">
                             <span v-if="user.role === 'admin'">
-                                Администратор склада<span v-if="!user.branch">{{ user.branch }}</span>
+                                <span v-if="!user.branch">Администратор склада {{ user.branch }}</span>
                                 <span v-else> Еще не привязан на склад</span>
-
-
                             </span>
                             <span v-if="user.role === 'superAdmin'">
                                 {{ user.branch }}
                             </span>
-                            <span v-else>
+                            <span v-if="user.role === 'user'">
                                 Активировал Super в
                                 {{ formatData(user.createAt) }}
                             </span>

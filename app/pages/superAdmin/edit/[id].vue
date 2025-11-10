@@ -3,6 +3,7 @@ import type { Branch } from "~/pages/auth/register.vue";
 
 const { $axios } = useNuxtApp()
 import { useToast, POSITION } from "vue-toastification";
+import type { User } from "../users.vue";
 const toast = useToast();
 
 const phoneNumber = ref<string>('')
@@ -14,6 +15,8 @@ const password = ref<string>('')
 const errorMessage = ref<string>('')
 const role = ref<string>('superAdmin')
 const token = useCookie('token')
+
+const oldData = ref()
 
 const router = useRouter()
 const route = useRoute()
@@ -34,64 +37,60 @@ async function getBranches() {
 
 async function getUserById() {
     try {
-        const UserData = await $axios(`user/${id}`, {
+        const UserData = await $axios(`user/search`, {
+            params: { search: id },
             headers: {
                 'Authorization': `Bearer ${token.value}`
             }
         })
-        console.log(UserData.data)
+
+        codeUser.value = UserData.data[0].code
+        phoneNumber.value = UserData.data[0].phoneNumber
+        name.value = UserData.data[0].name
+        surname.value = UserData.data[0].surname
+        selectBranch.value = UserData.data[0].branch
+        role.value = UserData.data[0].role
+        oldData.value = UserData.data[0]
     } catch (error) {
         console.log(error)
     }
-
 }
 
-const createUser = async () => {
-    if (
-        !phoneNumber.value ||
-        !name.value ||
-        !surname.value ||
-        !role.value ||
-        !password.value
-    ) {
-        errorMessage.value = 'Пожалуйста, заполните все поля'
-        return
-    }
+const updateUser = async () => {
     try {
-        const response = await $axios.post('admin/createuser', {
-            phoneNumber: phoneNumber.value,
-            code: codeUser.value || '',
-            name: name.value,
-            surname: surname.value,
-            role: role.value,
-            branch: selectBranch.value || '',
-            password: password.value
-        }, {
-            headers: {
-                'Authorization': `Bearer ${token.value}`
+        const updateData = await $axios.put(`user/${id}`, {
+            phoneNumber: phoneNumber.value || oldData.value.phoneNumber,
+            code: codeUser.value || oldData.value.code,
+            name: name.value || oldData.value.name,
+            surname: surname.value || oldData.value.surname,
+            role: role.value || oldData.value.role,
+            branch: selectBranch.value || oldData.value.branch,
+            password: password.value || oldData.value.password
+        },{
+            headers:{
+                'Authorization':`Bearer ${token.value}`
             }
         })
-        if (response.status === 201) {
-            toast.success('Успешно выполнено!', {
-                position: "top-center" as POSITION,
-                timeout: 3000
+        if (updateData.status === 200) {
+            toast.success('успешно изменено', {
+                position: 'top-center' as POSITION
             })
+            
         } else {
-            toast.warning('Не удалось добавить пользователя', {
+            toast.warning('не успешно изменено', {
                 position: 'top-center' as POSITION
             })
         }
-
         return navigateTo('/superAdmin/users')
     } catch (error) {
         console.log(error)
-        toast.error("Ошибка сервиса")
+        
     }
-
 }
 onMounted(() => {
-    getBranches(),
-        getUserById()
+    getUserById(),
+        getBranches()
+
 })
 </script>
 
@@ -102,14 +101,14 @@ onMounted(() => {
             <p>⤑</p>
             <routerLink class="tw-text-blue-600 hover:tw-underline" to="/superAdmin/users">Пользователи</routerLink>
             <p>⤑</p>
-            <p class="tw-text-gray-400">Изменить пользователь: Super</p>
+            <p class="tw-text-gray-400">Изменить пользователь: <span>{{ name }}</span></p>
         </div>
         <div class="tw-flex tw-items-center tw-justify-between tw-mt-5 tw-border-b-[1px] tw-border-gray-200 tw-pb-5">
             <span class="tw-text-[18px] tw-font-[500]">Добавить пользователь</span>
             <button @click="goToBack"
                 class="tw-bg-red-600 tw-text-white tw-h-[38px] tw-px-4 tw-rounded-[8px]">Назад</button>
         </div>
-        <form action="" @submit.prevent="createUser"
+        <form action="" @submit.prevent="updateUser"
             class="tw-bg-white tw-rounded-[8px] tw-shadow-2xl tw-mt-5 tw-p-6 tw-flex tw-flex-col tw-gap-5">
             <div class="tw-flex tw-flex-col tw-gap-1">
                 <label class="tw-text-[14px] tw-font-[400] tw-text-[#4B5563]" for="code">Код (для клиентов)</label>
