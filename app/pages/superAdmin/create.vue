@@ -46,7 +46,7 @@ const createUser = async () => {
             name: name.value,
             surname: surname.value,
             role: role.value,
-            branch: selectBranch.value || '',
+            branch: selectBranch.value.length === 0 ? null :selectBranch.value,
             password: password.value
         }, {
             headers: {

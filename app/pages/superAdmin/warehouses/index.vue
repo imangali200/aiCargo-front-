@@ -21,13 +21,27 @@ async function getBranches() {
     }
 
 }
-const removeBranch = async(id:number)=>{
-    const branchRes = await $axios.delete(`branch/${id}`,{
-        headers:{
-            'Authorization':`Bearer ${token.value}`
+const removeBranch = async (id: number) => {
+    try {
+        const branchRes = await $axios.delete(`branch/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token.value}`
+            }
+        })
+        if (branchRes.status === 200) {
+            toast.success('успешно удалено', {
+                position: 'top-center' as POSITION
+            })
+        } else {
+            toast.success('не успешно удалено', {
+                position: 'top-center' as POSITION
+            })
         }
-    })
-    console.log(branchRes)
+        getBranches()
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 onMounted(() => {
     getBranches()
@@ -45,11 +59,10 @@ onMounted(() => {
                 <button class="tw-w-[100px] tw-h-[38px] tw-rounded-[6px] tw-bg-red-600 tw-text-white"><router-link
                         to="/superAdmin/warehouses/trash">Корзина</router-link></button>
                 <button class="tw-w-[100px] tw-h-[38px] tw-rounded-[6px] tw-bg-[#0891B2] tw-text-white"><router-link
-                        to="/superAdmin/create">Добавить</router-link></button>
+                        to="/superAdmin/warehouses/create">Добавить</router-link></button>
             </div>
         </div>
-        <table v-if="branchData.length > 0"
-            class="tw-min-w-full tw-border tw-mt-[20px] tw-border-gray-300 tw-border-collapse ">
+        <table class="tw-min-w-full tw-border tw-mt-[20px] tw-border-gray-300 tw-border-collapse ">
             <thead class="tw-bg-gray-100">
                 <tr>
                     <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">#ID</th>
@@ -58,7 +71,7 @@ onMounted(() => {
                     <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">Действия</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody v-if="branchData.length > 0">
                 <tr v-for="data in branchData" :key="data.id">
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.id }}</td>
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.branchName }}</td>
@@ -67,15 +80,22 @@ onMounted(() => {
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">
                         <div class="tw-flex tw-items-center tw-gap-2 tw-text-white">
                             <button class="tw-bg-[#0891B2] tw-py-1 tw-px-2 tw-rounded-[4px]">изм.</button>
-                            <button @click="removeBranch(data.id)" class="tw-bg-red-600 tw-py-1 tw-px-2 tw-rounded-[4px]">уд.</button>
+                            <button @click="removeBranch(data.id)"
+                                class="tw-bg-red-600 tw-py-1 tw-px-2 tw-rounded-[4px]">уд.</button>
                         </div>
                     </td>
                 </tr>
             </tbody>
+            <tbody v-else class=" tw-bg-red-100 tw-w-full">
+                <tr>
+                    <td class=" tw-text-start tw-py-1 tw-pl-3 tw-text-red-700" :colspan="4">
+                        Нет никакого склада
+                    </td>
+                </tr>
+
+            </tbody>
 
         </table>
-        <div v-else class="tw-mt-4">
-            <h1>Нет никакого склада</h1>
-        </div>
+
     </div>
 </template>
