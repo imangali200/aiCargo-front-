@@ -6,7 +6,7 @@ definePageMeta({
 
 import { useToast, POSITION } from 'vue-toastification'
 
-interface User {
+interface Author {
     id: number
     name: string
     surname: string
@@ -16,8 +16,8 @@ interface User {
 interface Comment {
     id: number
     text: string
-    createAt: string
-    user?: User
+    createAt?: string
+    author?: Author
 }
 
 interface Post {
@@ -25,8 +25,9 @@ interface Post {
     link: string
     review: string
     likesCount: number
+    isLiked?: boolean
     createAt: string
-    user?: User
+    author?: Author
     comments?: Comment[]
 }
 
@@ -37,12 +38,30 @@ const router = useRouter()
 
 const posts = ref<Post[]>([])
 const loading = ref(false)
+const currentUser = ref<Author | null>(null)
 
 // Comment states
 const showComments = ref(false)
 const activePostId = ref<number | null>(null)
 const newComment = ref('')
 const sendingComment = ref(false)
+
+// Get current user profile
+async function getCurrentUser() {
+    try {
+        const response = await $axios.get('profile', {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        currentUser.value = {
+            id: response.data.id,
+            name: response.data.name,
+            surname: response.data.surname,
+            phoneNumber: response.data.phoneNumber
+        }
+    } catch (error) {
+        console.error('Get user error:', error)
+    }
+}
 
 // Get all posts
 async function getPosts() {
@@ -61,29 +80,49 @@ async function getPosts() {
     }
 }
 
-// Like post
-async function likePost(postId: number) {
+// Like post (toggle)
+async function likePost(postId: string) {
+    const numericId = Number(postId)
+    const post = posts.value.find(p => p.id === numericId)
+    if (!post) return
+
+    // Save old values for rollback
+    const wasLiked = post.isLiked
+    const oldCount = post.likesCount
+
+    // Toggle locally first (instant feedback)
+    if (post.isLiked) {
+        post.isLiked = false
+        post.likesCount = Math.max(0, post.likesCount - 1)
+    } else {
+        post.isLiked = true
+        post.likesCount++
+    }
+
+    // Send to backend
     try {
-        console.log('Like post:', postId)
-        const response = await $axios.post(`post/likes/${postId}`, {}, {
+        const response = await $axios.get(`post/likes/${postId}`, {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
-        console.log('Like response:', response.data)
-        const post = posts.value.find(p => p.id === postId)
-        if (post) {
-            post.likesCount++
+        // If backend returns updated values, use them
+        if (response.data?.likesCount !== undefined) {
+            post.likesCount = response.data.likesCount
         }
-        toast.success('❤️', { position: 'top-center' as POSITION, timeout: 1000 })
+        if (response.data?.isLiked !== undefined) {
+            post.isLiked = response.data.isLiked
+        }
     } catch (error: any) {
         console.error('Like error:', error.response?.data || error)
-        toast.error(error.response?.data?.message || 'Ошибка при лайке', { position: 'top-center' as POSITION })
+        // Rollback on error
+        post.isLiked = wasLiked
+        post.likesCount = oldCount
     }
 }
 
 // Save post
 async function savePost(postId: number) {
     try {
-        await $axios.post(`post/${postId}/save`, {}, {
+        await $axios.post(`post/save/${postId}`, {}, {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
         toast.success('Пост сохранён!', { position: 'top-center' as POSITION })
@@ -127,15 +166,13 @@ async function sendComment() {
                 id: response.data?.id || Date.now(),
                 text: newComment.value.trim(),
                 createAt: new Date().toISOString(),
-                user: undefined
+                author: currentUser.value || undefined
             })
         }
         
         newComment.value = ''
-        toast.success('Комментарий добавлен!', { position: 'top-center' as POSITION })
     } catch (error: any) {
         console.error(error)
-        toast.error('Ошибка при отправке комментария', { position: 'top-center' as POSITION })
     } finally {
         sendingComment.value = false
     }
@@ -161,17 +198,24 @@ function formatTime(date: string) {
 }
 
 function goBack() {
-    router.back()
+    router.push('/user')
 }
 
-function goToUserProfile(userId: number | undefined) {
-    if (userId) {
-        router.push(`/user/profile/${userId}`)
+function goToUserProfile(authorId: number | undefined) {
+    if (authorId) {
+        router.push(`/user/profile/${authorId}`)
     }
+}
+
+function goToCommentAuthorProfile(authorId: number) {
+
+    closeComments()
+    router.push(`/user/profile/${authorId}`)
 }
 
 onMounted(() => {
     getPosts()
+    getCurrentUser()
 })
 </script>
 
@@ -233,10 +277,10 @@ onMounted(() => {
 
                 <!-- Content - Centered on desktop -->
                 <div class="tw-relative tw-z-10 tw-w-full tw-max-w-2xl tw-px-5 tw-pb-8 tw-pr-20">
-                    <!-- User Info (clickable) -->
+                    <!-- Author Info (clickable) -->
                     <div 
                         class="tw-flex tw-items-center tw-gap-3 tw-mb-4 tw-cursor-pointer group"
-                        @click="goToUserProfile(post.user?.id)"
+                        @click.stop="goToUserProfile(post.author?.id)"
                     >
                         <!-- Avatar with gradient border -->
                         <div class="tw-relative">
@@ -248,13 +292,13 @@ onMounted(() => {
                                     class="tw-w-full tw-h-full tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-lg tw-font-bold tw-text-white"
                                     style="background: rgba(0,0,0,0.5);"
                                 >
-                                    {{ post.user?.name?.charAt(0).toUpperCase() || 'U' }}
+                                    {{ post.author?.name?.charAt(0).toUpperCase() || 'U' }}
                                 </div>
                             </div>
                         </div>
                         <div>
                             <p class="tw-text-white tw-font-semibold group-hover:tw-underline">
-                                @{{ post.user?.name || 'user' }}
+                                @{{ post.author?.name || 'user' }}
                             </p>
                             <p class="tw-text-white/50 tw-text-xs">{{ formatDate(post.createAt) }}</p>
                         </div>
@@ -283,14 +327,14 @@ onMounted(() => {
                 <div class="tw-absolute tw-right-4 tw-bottom-8 tw-flex tw-flex-col tw-items-center tw-gap-5 tw-z-10">
                     <!-- Like -->
                     <button 
-                        @click="likePost(post.id)"
+                        @click="likePost(String(post.id))"
                         class="tw-flex tw-flex-col tw-items-center tw-gap-1 group"
                     >
                         <div 
                             class="tw-w-12 tw-h-12 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-2xl group-hover:tw-scale-110 tw-transition-all"
-                            style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);"
+                            :style="post.isLiked ? 'background: rgba(239,68,68,0.3); backdrop-filter: blur(10px);' : 'background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);'"
                         >
-                            ❤️
+                            {{ post.isLiked ? '❤️' : '🤍' }}
                         </div>
                         <span class="tw-text-white tw-text-xs tw-font-medium">{{ post.likesCount }}</span>
                     </button>
@@ -318,17 +362,7 @@ onMounted(() => {
                             class="tw-w-12 tw-h-12 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-2xl group-hover:tw-scale-110 tw-transition-all"
                             style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);"
                         >
-                            🔖
-                        </div>
-                    </button>
-
-                    <!-- Share -->
-                    <button class="tw-flex tw-flex-col tw-items-center tw-gap-1 group">
-                        <div 
-                            class="tw-w-12 tw-h-12 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-2xl group-hover:tw-scale-110 tw-transition-all"
-                            style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);"
-                        >
-                            📤
+                            ➕
                         </div>
                     </button>
                 </div>
@@ -349,7 +383,7 @@ onMounted(() => {
 
                 <!-- Panel -->
                 <div 
-                    class="tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-bg-white tw-max-h-[70vh] tw-flex tw-flex-col"
+                    class="tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-bg-white tw-h-[85vh] tw-flex tw-flex-col"
                     style="border-radius: 24px 24px 0 0; animation: slideUp 0.3s ease-out;"
                 >
                     <!-- Header -->
@@ -390,21 +424,25 @@ onMounted(() => {
                                 :key="comment.id"
                                 class="tw-flex tw-gap-3"
                             >
-                                <!-- Avatar -->
+                                <!-- Avatar (clickable) -->
                                 <div 
-                                    class="tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-sm tw-font-bold tw-text-white tw-flex-shrink-0"
+                                    @click="comment.author?.id && goToCommentAuthorProfile(comment.author.id)"
+                                    class="tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-sm tw-font-bold tw-text-white tw-flex-shrink-0 tw-cursor-pointer hover:tw-scale-105 tw-transition-transform"
                                     style="background: linear-gradient(135deg, #0891B2, #0e7490);"
                                 >
-                                    {{ comment.user?.name?.charAt(0).toUpperCase() || 'U' }}
+                                    {{ comment.author?.name?.charAt(0).toUpperCase() || 'U' }}
                                 </div>
 
                                 <!-- Content -->
                                 <div class="tw-flex-1">
                                     <div class="tw-flex tw-items-center tw-gap-2 tw-mb-1">
-                                        <span class="tw-font-semibold tw-text-gray-800 tw-text-sm">
-                                            {{ comment.user?.name || 'Вы' }}
+                                        <span 
+                                            @click="comment.author?.id && goToCommentAuthorProfile(comment.author.id)"
+                                            class="tw-font-semibold tw-text-gray-800 tw-text-sm tw-cursor-pointer hover:tw-text-[#0891B2] hover:tw-underline"
+                                        >
+                                            @{{ comment.author?.name || 'user' }}
                                         </span>
-                                        <span class="tw-text-gray-400 tw-text-xs">
+                                        <span v-if="comment.createAt" class="tw-text-gray-400 tw-text-xs">
                                             {{ formatTime(comment.createAt) }}
                                         </span>
                                     </div>

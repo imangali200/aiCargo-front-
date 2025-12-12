@@ -35,7 +35,7 @@ async function createPost() {
             { headers: { 'Authorization': `Bearer ${token.value}` } }
         )
         toast.success('Пост создан!', { position: 'top-center' as POSITION })
-        router.push('/user/profile')
+        router.push('/user/me')
     } catch (error: any) {
         console.error(error)
         toast.error(error.response?.data?.message || 'Ошибка при создании поста', { position: 'top-center' as POSITION })

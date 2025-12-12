@@ -26,7 +26,7 @@ const router = useRouter()
 const token = useCookie('token')
 
 const goToProfile = () => {
-    router.push('/user/profile')
+    router.push('/user/me')
 }
 
 const removetoken = async () => {

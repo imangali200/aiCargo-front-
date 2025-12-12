@@ -99,7 +99,7 @@ async function postRegister() {
   }
   try {
     const response = await $axios.post('auth/register', {
-      phoneNumber: phoneNumber.value,
+      phoneNumber: phoneNumber.value.replace(/\s+/g, ''),
       code: codeUser.value,
       name: name.value,
       surname: surname.value,
@@ -118,7 +118,7 @@ async function postRegister() {
   }
 }
 
-const phoneInput = ref(null);
+const phoneInput = ref<HTMLInputElement | null>(null);
 onMounted(() => {
   if (phoneInput.value) {
     IMask(phoneInput.value, {

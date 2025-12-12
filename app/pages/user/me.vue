@@ -6,6 +6,24 @@ definePageMeta({
 
 import { useToast, POSITION } from 'vue-toastification'
 
+interface Post {
+    id: number
+    link: string
+    review: string
+    likesCount: number
+    createAt: string
+}
+
+// LikedPost is same structure as Post
+type LikedPost = Post
+
+interface SavedProduct {
+    id: number
+    productId: string
+    description: string
+    createdAt: string
+}
+
 interface Profile {
     id: number
     phoneNumber: string
@@ -16,21 +34,9 @@ interface Profile {
     isActive: boolean
     role: string
     createAt: string
-}
-
-interface Post {
-    id: number
-    link: string
-    review: string
-    likesCount: number
-    createAt: string
-}
-
-interface SavedProduct {
-    id: number
-    productId: string
-    description: string
-    createdAt: string
+    posts: Post[]
+    postLikes: LikedPost[]
+    saved: SavedProduct[] | null
 }
 
 const { $axios } = useNuxtApp()
@@ -39,12 +45,10 @@ const toast = useToast()
 const router = useRouter()
 
 const profile = ref<Profile | null>(null)
-const posts = ref<Post[]>([])
-const savedProducts = ref<SavedProduct[]>([])
 const loading = ref(false)
-const activeTab = ref<'posts' | 'saved'>('posts')
+const activeTab = ref<'posts' | 'likes' | 'saved'>('posts')
 
-// Get profile info
+// Get profile info (includes posts and saved)
 async function getProfile() {
     loading.value = true
     try {
@@ -60,32 +64,14 @@ async function getProfile() {
     }
 }
 
-// Get my posts
-async function getMyPosts() {
-    try {
-        const response = await $axios.get('profile/posts', {
-            headers: { 'Authorization': `Bearer ${token.value}` }
-        })
-        // Posts are inside the user object
-        posts.value = response.data?.posts || []
-    } catch (error: any) {
-        console.error(error)
-        posts.value = []
-    }
-}
+// Computed for posts
+const posts = computed(() => profile.value?.posts || [])
 
-// Get saved products
-async function getSavedProducts() {
-    try {
-        const response = await $axios.get('profile/savedProduct', {
-            headers: { 'Authorization': `Bearer ${token.value}` }
-        })
-        savedProducts.value = response.data || []
-    } catch (error: any) {
-        console.error(error)
-        savedProducts.value = []
-    }
-}
+// Computed for liked posts
+const likedPosts = computed(() => profile.value?.postLikes || [])
+
+// Computed for saved products
+const savedProducts = computed(() => profile.value?.saved || [])
 
 function goBack() {
     router.back()
@@ -101,8 +87,6 @@ function formatDate(date: string) {
 
 onMounted(() => {
     getProfile()
-    getMyPosts()
-    getSavedProducts()
 })
 </script>
 
@@ -153,10 +137,14 @@ onMounted(() => {
                         </div>
 
                         <!-- Stats -->
-                        <div class="tw-flex tw-gap-6 tw-mb-3">
+                        <div class="tw-flex tw-gap-5 tw-mb-3 tw-flex-wrap">
                             <div class="tw-flex tw-items-center tw-gap-1">
                                 <span class="tw-font-bold tw-text-gray-900">{{ posts.length }}</span>
                                 <span class="tw-text-gray-500 tw-text-sm">Постов</span>
+                            </div>
+                            <div class="tw-flex tw-items-center tw-gap-1">
+                                <span class="tw-font-bold tw-text-gray-900">{{ likedPosts.length }}</span>
+                                <span class="tw-text-gray-500 tw-text-sm">Лайков</span>
                             </div>
                             <div class="tw-flex tw-items-center tw-gap-1">
                                 <span class="tw-font-bold tw-text-gray-900">{{ savedProducts.length }}</span>
@@ -178,22 +166,32 @@ onMounted(() => {
                 <div class="tw-flex">
                     <button 
                         @click="activeTab = 'posts'"
-                        class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
+                        class="tw-flex-1 tw-py-3 tw-flex tw-items-center tw-justify-center tw-gap-1 tw-font-medium tw-text-xs sm:tw-text-sm tw-transition-all tw-border-b-2"
                         :class="activeTab === 'posts' 
                             ? 'tw-border-[#0891B2] tw-text-[#0891B2]' 
                             : 'tw-border-transparent tw-text-gray-500'"
                     >
-                        <span class="tw-text-lg">📝</span>
-                        Мои посты
+                        <span class="tw-text-base">📝</span>
+                        Посты
+                    </button>
+                    <button 
+                        @click="activeTab = 'likes'"
+                        class="tw-flex-1 tw-py-3 tw-flex tw-items-center tw-justify-center tw-gap-1 tw-font-medium tw-text-xs sm:tw-text-sm tw-transition-all tw-border-b-2"
+                        :class="activeTab === 'likes' 
+                            ? 'tw-border-[#EC4899] tw-text-[#EC4899]' 
+                            : 'tw-border-transparent tw-text-gray-500'"
+                    >
+                        <span class="tw-text-base">❤️</span>
+                        Лайки
                     </button>
                     <button 
                         @click="activeTab = 'saved'"
-                        class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
+                        class="tw-flex-1 tw-py-3 tw-flex tw-items-center tw-justify-center tw-gap-1 tw-font-medium tw-text-xs sm:tw-text-sm tw-transition-all tw-border-b-2"
                         :class="activeTab === 'saved' 
-                            ? 'tw-border-[#0891B2] tw-text-[#0891B2]' 
+                            ? 'tw-border-[#8B5CF6] tw-text-[#8B5CF6]' 
                             : 'tw-border-transparent tw-text-gray-500'"
                     >
-                        <span class="tw-text-lg">🔖</span>
+                        <span class="tw-text-base">🔖</span>
                         Сохранённые
                     </button>
                 </div>
@@ -267,6 +265,72 @@ onMounted(() => {
                     </div>
                 </div>
 
+                <!-- Likes Tab -->
+                <div v-if="activeTab === 'likes'">
+                    <!-- Empty state -->
+                    <div v-if="!likedPosts.length" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16">
+                        <div 
+                            class="tw-w-20 tw-h-20 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-mb-4"
+                            style="background: #f3f4f6;"
+                        >
+                            <span class="tw-text-4xl">❤️</span>
+                        </div>
+                        <h3 class="tw-text-xl tw-font-bold tw-text-gray-800 tw-mb-2">Нет лайкнутых постов</h3>
+                        <p class="tw-text-gray-500 tw-text-sm">Здесь появятся посты которые вы лайкнули</p>
+                    </div>
+                    
+                    <!-- Liked posts grid -->
+                    <div v-else class="tw-grid tw-grid-cols-2 md:tw-grid-cols-3 tw-gap-3 tw-p-4">
+                        <div 
+                            v-for="post in likedPosts" 
+                            :key="post.id"
+                            class="tw-bg-white tw-rounded-2xl tw-overflow-hidden tw-shadow-md hover:tw-shadow-lg tw-transition-all tw-cursor-pointer"
+                        >
+                            <!-- Post Header - Pink gradient -->
+                            <div 
+                                class="tw-p-4 tw-text-white"
+                                style="background: linear-gradient(135deg, #EC4899, #DB2777);"
+                            >
+                                <div class="tw-flex tw-items-center tw-gap-2 tw-mb-2">
+                                    <span class="tw-text-lg">❤️</span>
+                                    <span class="tw-font-bold tw-text-sm">Пост #{{ post.id }}</span>
+                                </div>
+                                <p class="tw-text-white/80 tw-text-xs">
+                                    {{ formatDate(post.createAt) }}
+                                </p>
+                            </div>
+                            
+                            <!-- Post Content -->
+                            <div class="tw-p-4">
+                                <!-- Link -->
+                                <div class="tw-mb-3">
+                                    <p class="tw-text-xs tw-text-gray-400 tw-mb-1">Ссылка:</p>
+                                    <a 
+                                        :href="post.link" 
+                                        target="_blank"
+                                        class="tw-text-[#EC4899] tw-text-sm tw-underline tw-break-all tw-line-clamp-2"
+                                    >
+                                        {{ post.link }}
+                                    </a>
+                                </div>
+                                
+                                <!-- Review -->
+                                <div class="tw-mb-3">
+                                    <p class="tw-text-xs tw-text-gray-400 tw-mb-1">Отзыв:</p>
+                                    <p class="tw-text-gray-700 tw-text-sm tw-line-clamp-3">{{ post.review }}</p>
+                                </div>
+                                
+                                <!-- Likes -->
+                                <div class="tw-flex tw-items-center tw-gap-2 tw-pt-2 tw-border-t tw-border-gray-100">
+                                    <span class="tw-text-red-500">❤️</span>
+                                    <span class="tw-font-bold tw-text-gray-800">{{ post.likesCount }}</span>
+                                    <span class="tw-text-gray-400 tw-text-sm">лайков</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Saved Tab -->
                 <div v-if="activeTab === 'saved'">
                     <!-- Empty state -->
@@ -286,7 +350,8 @@ onMounted(() => {
                         <div 
                             v-for="product in savedProducts" 
                             :key="product.id"
-                            class="tw-aspect-square tw-bg-gradient-to-br tw-from-[#0891B2]/10 tw-to-[#0891B2]/20 tw-overflow-hidden tw-cursor-pointer hover:tw-opacity-80 tw-transition-all tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-2"
+                            class="tw-aspect-square tw-overflow-hidden tw-cursor-pointer hover:tw-opacity-80 tw-transition-all tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-2"
+                            style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.2));"
                         >
                             <span class="tw-text-3xl tw-mb-2">📦</span>
                             <p class="tw-font-bold tw-text-gray-800 tw-text-xs tw-text-center">{{ product.productId }}</p>

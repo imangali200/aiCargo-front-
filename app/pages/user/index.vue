@@ -26,6 +26,7 @@ const products = ref<Product[]>([])
 const loading = ref(false)
 const searchQuery = ref('')
 const searchLoading = ref(false)
+const isSearchMode = ref(false)
 
 // Modal states
 const showAddModal = ref(false)
@@ -101,6 +102,7 @@ async function addTrack() {
 async function searchTrack() {
     if (!searchQuery.value.trim()) {
         await getMyProducts()
+        isSearchMode.value = false
         return
     }
     
@@ -110,6 +112,7 @@ async function searchTrack() {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
         products.value = response.data ? [response.data] : []
+        isSearchMode.value = true
     } catch (error: any) {
         console.error(error)
         if (error.response?.status === 404) {
@@ -118,6 +121,7 @@ async function searchTrack() {
         } else {
             toast.error('Ошибка при поиске', { position: 'top-center' as POSITION })
         }
+        isSearchMode.value = true
     } finally {
         searchLoading.value = false
     }
@@ -173,6 +177,7 @@ function viewTrack(productId: string) {
 // Clear search
 function clearSearch() {
     searchQuery.value = ''
+    isSearchMode.value = false
     getMyProducts()
 }
 
@@ -201,7 +206,7 @@ onMounted(() => {
                 to="/user/feed"
                 class="tw-bg-[#EC4899] tw-text-white tw-py-3 tw-rounded-xl tw-font-medium hover:tw-bg-[#DB2777] tw-transition-colors tw-text-center tw-text-xs sm:tw-text-sm"
             >
-                📝 Лента
+                📝 Posts
             </router-link>
             <router-link 
                 to="/user/archive"
@@ -212,14 +217,39 @@ onMounted(() => {
         </div>
 
         <!-- Search -->
-        <div class="tw-mt-4">
+        <div class="tw-mt-4 tw-flex tw-gap-2">
             <input 
                 v-model="searchQuery"
                 @keyup.enter="searchTrack"
                 type="text" 
-                placeholder="Поиск..."
-                class="tw-w-full tw-h-12 tw-px-4 tw-rounded-xl tw-border tw-border-gray-200 tw-bg-white focus:tw-outline-none focus:tw-border-[#0891B2] tw-transition-colors"
+                placeholder="Поиск по трек-коду..."
+                class="tw-flex-1 tw-h-12 tw-px-4 tw-rounded-xl tw-border tw-border-gray-200 tw-bg-white focus:tw-outline-none focus:tw-border-[#0891B2] tw-transition-colors"
             >
+            <button 
+                @click="searchTrack"
+                class="tw-h-12 tw-px-5 tw-text-white tw-font-medium tw-rounded-xl tw-transition-all hover:tw-shadow-lg tw-flex tw-items-center tw-gap-2"
+                style="background: linear-gradient(135deg, #0891B2, #0e7490);"
+            >
+                🔍
+                <span class="tw-hidden sm:tw-inline">Поиск</span>
+            </button>
+            <!-- Cancel button - shows when in search mode -->
+            <button 
+                v-if="isSearchMode"
+                @click="clearSearch"
+                class="tw-h-12 tw-px-5 tw-text-white tw-font-medium tw-rounded-xl tw-transition-all hover:tw-shadow-lg tw-flex tw-items-center tw-gap-2"
+                style="background: linear-gradient(135deg, #EF4444, #DC2626);"
+            >
+                ✕
+                <span class="tw-hidden sm:tw-inline">Отмена</span>
+            </button>
+        </div>
+        
+        <!-- Search mode indicator -->
+        <div v-if="isSearchMode" class="tw-mt-3 tw-flex tw-items-center tw-gap-2 tw-text-sm tw-text-gray-600">
+            <span>🔍 Результат поиска:</span>
+            <span class="tw-font-semibold tw-text-[#0891B2]">"{{ searchQuery }}"</span>
+            <span class="tw-text-gray-400">({{ products.length }} найдено)</span>
         </div>
 
         <!-- Loading -->
