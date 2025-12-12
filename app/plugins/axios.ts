@@ -1,7 +1,7 @@
 import axios from "axios";
 export default defineNuxtPlugin(() => {
   const instance = axios.create({
-    baseURL: "https://ai-cargo.onrender.com/",
+    baseURL: "http://localhost:8080/",
   });
   return {
     provide: {

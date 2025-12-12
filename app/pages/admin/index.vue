@@ -10,11 +10,15 @@
             </div>
             <div
                 class="tw-w-full sm:tw-w-[200px] tw-bg-white tw-h-[76px] tw-rounded-[12px] tw-pl-5 tw-flex tw-items-center hover:tw-bg-yellow-100 tw-cursor-pointer hover:tw-text-blue-600 hover:tw-underline  tw-text-[18px] tw-transition tw-duration-200">
-                <router-link to="admin/import">История / History</router-link>
+                <router-link to="/admin/history">История/History</router-link>
+            </div>
+            <div
+                class="tw-w-full sm:tw-w-[200px] tw-bg-white tw-h-[76px] tw-rounded-[12px] tw-pl-5 tw-flex tw-items-center hover:tw-bg-yellow-100 tw-cursor-pointer hover:tw-text-blue-600 hover:tw-underline  tw-text-[18px] tw-transition tw-duration-200">
+                <router-link to="/admin/import">Импорт</router-link>
             </div>
             <div
                 class="tw-w-full sm:tw-w-[200px] tw-bg-white tw-h-[76px] tw-rounded-[12px] tw-pl-5 tw-flex tw-items-center hover:tw-bg-yellow-100 tw-cursor-pointe hover:tw-text-blue-600 hover:tw-underline  tw-text-[18px] tw-transition tw-duration-200">
-                <router-link to="/superAdmin/tracks">Импорт</router-link>
+                <router-link to="/admin/complete-tracks">Выдать товар клиенту</router-link>
             </div>
         </div>
     </div>

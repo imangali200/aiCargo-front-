@@ -9,8 +9,10 @@ const token = useCookie('token')
 const { $axios } = useNuxtApp()
 const toast = useToast()
 const branchData = ref<Branch[]>([])
+const loading = ref(false)
 
 async function getBranches() {
+    loading.value = true
     try {
         const res = await $axios.get('branch', {
             headers: {
@@ -19,9 +21,13 @@ async function getBranches() {
         })
 
         branchData.value = res.data
-        console.log(branchData.value)
     } catch (error) {
         console.log(error)
+        toast.error('Ошибка при загрузке складов', {
+            position: 'top-center' as POSITION
+        })
+    } finally {
+        loading.value = false
     }
 
 }
@@ -66,7 +72,14 @@ onMounted(() => {
                         to="/superAdmin/warehouses/create">Добавить</router-link></button>
             </div>
         </div>
-        <table class="tw-min-w-full tw-border tw-mt-[20px] tw-border-gray-300 tw-border-collapse ">
+
+        <!-- Loading -->
+        <div v-if="loading" class="tw-mt-6 tw-text-center tw-py-8">
+            <div class="tw-inline-block tw-animate-spin tw-rounded-full tw-h-8 tw-w-8 tw-border-4 tw-border-[#0891B2] tw-border-t-transparent"></div>
+            <p class="tw-mt-2 tw-text-gray-500">Загрузка...</p>
+        </div>
+
+        <table v-else class="tw-min-w-full tw-border tw-mt-[20px] tw-border-gray-300 tw-border-collapse ">
             <thead class="tw-bg-gray-100">
                 <tr>
                     <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">#ID</th>
@@ -76,7 +89,7 @@ onMounted(() => {
                 </tr>
             </thead>
             <tbody v-if="branchData.length > 0">
-                <tr v-for="data in branchData" :key="data.id">
+                <tr v-for="data in branchData" :key="data.id" class="hover:tw-bg-gray-50">
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.id }}</td>
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.branchName }}</td>
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.responsibleName }}
@@ -90,15 +103,13 @@ onMounted(() => {
                     </td>
                 </tr>
             </tbody>
-            <tbody v-else class=" tw-bg-red-100 tw-w-full">
+            <tbody v-else>
                 <tr>
-                    <td class=" tw-text-start tw-py-1 tw-pl-3 tw-text-red-700" :colspan="4">
+                    <td class="tw-text-center tw-py-8 tw-text-gray-400" :colspan="4">
                         Нет никакого склада
                     </td>
                 </tr>
-
             </tbody>
-
         </table>
 
     </div>

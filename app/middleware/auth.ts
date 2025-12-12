@@ -13,11 +13,11 @@ export default defineNuxtRouteMiddleware((to) => {
   
   const payload = jwtDecode<myJwtPayload>(token)
   
-  if (payload.role === "admin" && to.path !== '/admin') {
+  if (payload.role === "admin" && !to.path.startsWith('/admin')) {
     return navigateTo("/admin");
-  } else if (payload.role === "superAdmin" && to.path !== '/superAdmin') {
+  } else if (payload.role === "superAdmin" && !to.path.startsWith('/superAdmin')) {
     return navigateTo("/superAdmin");
-  } else if(payload.role === "user" && to.path !== '/user'){
+  } else if(payload.role === "user" && !to.path.startsWith('/user')){
     return navigateTo("/user");
   }
 });

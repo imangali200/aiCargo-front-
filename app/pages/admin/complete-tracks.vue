@@ -5,12 +5,12 @@
     <div class="tw-flex tw-items-center tw-gap-2">
       <router-link class="tw-text-blue-600 hover:tw-underline" to="/superAdmin">Главная</router-link>
       <span>→</span>
-      <span class="tw-text-gray-400">Принять товары</span>
+      <span class="tw-text-gray-400">Выдать товары клиентам</span>
     </div>
 
     <!-- Предупреждение -->
-    <p class="tw-text-green-600 tw-text-center tw-mt-4 tw-text-[16px]">
-      Сканируйте штрих-код для добавления товара в систему
+    <p class="tw-text-red-500 tw-text-center tw-mt-4 tw-text-[16px]">
+      Внимания! После сканирования заказ считается выполненным!
     </p>
 
     <!-- Сканер штрих кодов -->
@@ -63,7 +63,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in addedProducts" :key="index" class="tw-border-b last:tw-border-b-0">
+          <tr v-for="(item, index) in completedTracks" :key="index" class="tw-border-b last:tw-border-b-0">
             <td class="tw-px-4 tw-py-3 tw-text-gray-800">{{ item.trackCode }}</td>
             <td class="tw-px-4 tw-py-3">
               <span 
@@ -73,7 +73,7 @@
               </span>
             </td>
           </tr>
-          <tr v-if="addedProducts.length === 0">
+          <tr v-if="completedTracks.length === 0">
             <td colspan="2" class="tw-px-4 tw-py-8 tw-text-center tw-text-gray-400">
               Сканируйте или введите трек-код для начала
             </td>
@@ -98,13 +98,13 @@ const scannerCode = ref('')
 const manualCode = ref('')
 const loading = ref(false)
 
-interface AddedProduct {
+interface CompletedTrack {
   trackCode: string
   status: string
   success: boolean
 }
 
-const addedProducts = ref<AddedProduct[]>([])
+const completedTracks = ref<CompletedTrack[]>([])
 
 onMounted(() => {
   // Автофокус на сканер
@@ -115,7 +115,7 @@ onMounted(() => {
 const handleScannerInput = async () => {
   if (!scannerCode.value.trim()) return
   
-  await addProduct(scannerCode.value.trim())
+  await completeTrack(scannerCode.value.trim())
   scannerCode.value = ''
   scannerInput.value?.focus()
 }
@@ -124,17 +124,17 @@ const handleScannerInput = async () => {
 const addManualCode = async () => {
   if (!manualCode.value.trim()) return
   
-  await addProduct(manualCode.value.trim())
+  await completeTrack(manualCode.value.trim())
   manualCode.value = ''
 }
 
-// Добавить товар
-const addProduct = async (trackCode: string) => {
+// Завершить трек
+const completeTrack = async (trackCode: string) => {
   loading.value = true
   
   try {
-    await $axios.post(
-      '/admin/tracks',
+    const res = await $axios.post(
+      '/admin/tracks/complete-tracks',
       { productId: trackCode },
       {
         headers: {
@@ -143,18 +143,18 @@ const addProduct = async (trackCode: string) => {
       }
     )
     
-    addedProducts.value.unshift({
+    completedTracks.value.unshift({
       trackCode,
-      status: 'Добавлено ✓',
+      status: 'Выполнено ✓',
       success: true
     })
     
-    toast.success(`Товар ${trackCode} добавлен!`)
+    toast.success(`Трек ${trackCode} выполнен!`)
     
   } catch (err: any) {
     const errorMessage = err.response?.data?.message || 'Ошибка'
     
-    addedProducts.value.unshift({
+    completedTracks.value.unshift({
       trackCode,
       status: errorMessage,
       success: false
@@ -168,6 +168,6 @@ const addProduct = async (trackCode: string) => {
 
 // Завершить сканирование
 const finishScanning = () => {
-  toast.info(`Сканирование завершено. Добавлено: ${addedProducts.value.filter(p => p.success).length} товаров`)
+  toast.info(`Сканирование завершено. Обработано: ${completedTracks.value.length} треков`)
 }
 </script>
