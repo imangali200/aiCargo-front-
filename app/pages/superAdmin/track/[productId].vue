@@ -1,4 +1,9 @@
 <script setup lang="ts">
+    definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
+
 import type { Products } from '../tracks.vue'
 
 const route = useRoute()

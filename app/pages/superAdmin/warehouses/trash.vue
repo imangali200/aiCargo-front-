@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 import { useToast, POSITION } from 'vue-toastification';
 import type { Branch } from '~/pages/auth/register.vue';
 const token = useCookie('token')
@@ -80,7 +84,8 @@ onMounted(() => {
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.branchName }}</td>
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ data.responsibleName }}
                     </td>
-                    <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">Удалил Super в {{ formatData(data.deleteAt) }}
+                    <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">Удалил Super в {{
+                        formatData(data.deleteAt) }}
                     </td>
                     <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">
                         <div class="tw-flex tw-items-center tw-gap-2 tw-text-white">

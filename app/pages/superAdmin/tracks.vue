@@ -1,4 +1,9 @@
 <script setup lang="ts">
+    definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
+
 import { useToast, POSITION } from 'vue-toastification'
 const { $axios } = useNuxtApp()
 const token = useCookie('token')

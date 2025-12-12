@@ -1,4 +1,9 @@
 <script setup lang="ts">
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
+
 import type { Branch } from '../auth/register.vue'
 
 const { $axios } = useNuxtApp()

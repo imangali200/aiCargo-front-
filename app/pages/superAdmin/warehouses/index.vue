@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 import { useToast, POSITION } from 'vue-toastification';
 import type { Branch } from '~/pages/auth/register.vue';
 const token = useCookie('token')

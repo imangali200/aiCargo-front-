@@ -1,4 +1,9 @@
 <script setup lang="ts">
+    definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
+
 import type { User } from './users.vue'
 import { useToast,POSITION } from 'vue-toastification'
 const toast = useToast()

@@ -1,4 +1,9 @@
 <script setup lang="ts">
+    definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
+
 import { useToast, POSITION } from 'vue-toastification'
 const { $axios } = useNuxtApp()
 const token = useCookie('token')
@@ -195,7 +200,7 @@ onMounted(() => {
                         <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">{{ user.password }}</td>
                         <td class="tw-border tw-text-[14px] tw-border-gray-300 tw-px-4 tw-py-2">
                             <span v-if="user.role === 'admin'">
-                                <span v-if="!user.branch">Администратор склада {{ user.branch }}</span>
+                                <span v-if="user.branch">Администратор {{ user.branch }}</span>
                                 <span v-else> Еще не привязан на склад</span>
                             </span>
                             <span v-if="user.role === 'superAdmin'">

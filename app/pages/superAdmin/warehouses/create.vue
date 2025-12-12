@@ -1,9 +1,13 @@
 <script setup lang="ts">
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 import type { User } from '../users.vue'
-import { useToast,POSITION } from 'vue-toastification'
+import { useToast, POSITION } from 'vue-toastification'
 const toast = useToast()
 const router = useRouter()
-const {$axios} = useNuxtApp()
+const { $axios } = useNuxtApp()
 const token = useCookie('token')
 const adminList = ref<User[]>([])
 
@@ -15,19 +19,17 @@ const goBack = () => {
     router.back()
 }
 
-
-
-async function getFreeAdmins(){
+async function getFreeAdmins() {
     try {
-        const admins = await $axios.get('user/admins',{
-            headers:{
-                'Authorization':`Bearer ${token.value}`
+        const admins = await $axios.get('user/admins', {
+            headers: {
+                'Authorization': `Bearer ${token.value}`
             }
         })
-        
-        if(admins.status === 404){
+
+        if (admins.status === 404) {
             adminList.value = []
-        }else{
+        } else {
             adminList.value = admins.data
         }
         console.log(adminList.value)
@@ -35,27 +37,27 @@ async function getFreeAdmins(){
         console.log(error)
     }
 }
-const createBranch = async()=>{
-    if(!selectAdmin.value || !branchName.value || selectAdmin.value === 'undefined undefined')  {
+const createBranch = async () => {
+    if (!selectAdmin.value || !branchName.value || selectAdmin.value === 'undefined undefined') {
         errorMessage.value = 'Необходимо заполнить все поля.'
         return
     }
     try {
-        const resBranch = await $axios.post('branch',{
-            branchName:branchName.value,
-            responsibleName:selectAdmin.value
-        },{
-            headers:{
-                'Authorization':`Bearer ${token.value}`
+        const resBranch = await $axios.post('branch', {
+            branchName: branchName.value,
+            responsibleName: selectAdmin.value
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token.value}`
             }
         })
-        if(resBranch.status === 201){
-            toast.success('Филиал успешно создана',{
-                position:'top-center'as POSITION
+        if (resBranch.status === 201) {
+            toast.success('Филиал успешно создана', {
+                position: 'top-center' as POSITION
             })
-        }else{
-            toast.warning('Филиал не успешно создана',{
-                position:'top-center'as POSITION
+        } else {
+            toast.warning('Филиал не успешно создана', {
+                position: 'top-center' as POSITION
             })
         }
         errorMessage.value = ''
@@ -64,7 +66,7 @@ const createBranch = async()=>{
         console.log(error)
     }
 }
-onMounted(()=>{
+onMounted(() => {
     getFreeAdmins()
 })
 </script>
@@ -90,13 +92,17 @@ onMounted(()=>{
                         class="tw-border-[1px] tw-border-gray-300 tw-rounded-md tw-h-[36px] tw-px-2 tw-bg-transparent" />
                 </div>
                 <div>
-                    <select class="tw-w-[200px] tw-h-[30px] tw-border-[1px] tw-border-gray-400 tw-rounded-[6px]" v-model="selectAdmin">
-                        <option v-for="admin in adminList" :key="admin.id"  :value="admin.name + ' ' + admin.surname">{{ admin.name }} {{ admin.surname }}</option>
+                    <select class="tw-w-[200px] tw-h-[30px] tw-border-[1px] tw-border-gray-400 tw-rounded-[6px]"
+                        v-model="selectAdmin">
+                        <option v-for="admin in adminList" :key="admin.id" :value="admin.name + ' ' + admin.surname">{{
+                            admin.name }} {{ admin.surname }}</option>
                     </select>
-                    <p v-if="!adminList?.length">У вас нет доступных администраторов, <router-link class="tw-text-blue-500"  to="/superAdmin/users">добавьте их</router-link></p>
+                    <p v-if="!adminList?.length">У вас нет доступных администраторов, <router-link
+                            class="tw-text-blue-500" to="/superAdmin/users">добавьте их</router-link></p>
                 </div>
                 <p class="tw-text-red-500">{{ errorMessage }}</p>
-                <button type="submit" class="tw-bg-[#0891B2] tw-text-white tw-w-[200px] tw-rounded-[10px] tw-h-[40px]">Сохранить</button>
+                <button type="submit"
+                    class="tw-bg-[#0891B2] tw-text-white tw-w-[200px] tw-rounded-[10px] tw-h-[40px]">Сохранить</button>
             </form>
         </div>
     </div>
