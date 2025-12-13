@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
     layout: 'post',
-    middleware: 'auth'
+    middleware: ['auth', 'user-active']
 })
 
 import { useToast, POSITION } from 'vue-toastification'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
     layout: 'default',
-    middleware: ['auth', 'user-active']
+    middleware: 'auth'
 })
 
 interface Post {
@@ -16,6 +16,11 @@ interface Profile {
     id: number
     name: string
     surname: string
+    phoneNumber?: string
+    code?: string
+    branch?: string
+    role?: string
+    isActive?: boolean
     posts: Post[]
 }
 
@@ -55,6 +60,17 @@ function goBack() {
     router.back()
 }
 
+function getRoleBadge(role: string) {
+    switch (role) {
+        case 'superAdmin':
+            return { text: '👑 SuperAdmin', class: 'tw-from-indigo-500 tw-to-purple-500' }
+        case 'admin':
+            return { text: '⭐ Admin', class: 'tw-from-amber-500 tw-to-orange-500' }
+        default:
+            return { text: '👤 User', class: 'tw-from-cyan-500 tw-to-blue-500' }
+    }
+}
+
 // Computed for posts
 const posts = computed(() => profile.value?.posts || [])
 
@@ -70,7 +86,7 @@ watch(userId, (newId) => {
     <div class="tw-pb-6 tw-bg-white tw-min-h-screen">
         <!-- Loading -->
         <div v-if="loading" class="tw-text-center tw-py-16">
-            <div class="tw-inline-block tw-animate-spin tw-rounded-full tw-h-12 tw-w-12 tw-border-4 tw-border-[#0891B2] tw-border-t-transparent"></div>
+            <div class="tw-inline-block tw-animate-spin tw-rounded-full tw-h-12 tw-w-12 tw-border-4 tw-border-[#F59E0B] tw-border-t-transparent"></div>
             <p class="tw-mt-4 tw-text-gray-500">Загрузка...</p>
         </div>
 
@@ -81,7 +97,7 @@ watch(userId, (newId) => {
                     <!-- Avatar -->
                     <div 
                         class="tw-w-24 tw-h-24 md:tw-w-32 md:tw-h-32 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-4xl md:tw-text-5xl tw-font-bold tw-text-white tw-flex-shrink-0"
-                        style="background: linear-gradient(135deg, #0891B2, #0e7490);"
+                        style="background: linear-gradient(135deg, #F59E0B, #D97706);"
                     >
                         {{ profile.name?.charAt(0).toUpperCase() || 'U' }}
                     </div>
@@ -89,10 +105,17 @@ watch(userId, (newId) => {
                     <!-- Info -->
                     <div class="tw-flex-1 tw-pt-2">
                         <!-- Name -->
-                        <div class="tw-flex tw-items-center tw-gap-3 tw-mb-2">
+                        <div class="tw-flex tw-items-center tw-gap-3 tw-mb-2 tw-flex-wrap">
                             <h1 class="tw-text-xl md:tw-text-2xl tw-font-bold tw-text-gray-900">
                                 {{ profile.name }} {{ profile.surname }}
                             </h1>
+                            <span 
+                                v-if="profile.role"
+                                class="tw-px-3 tw-py-1 tw-bg-gradient-to-r tw-text-white tw-text-xs tw-font-bold tw-rounded-full"
+                                :class="getRoleBadge(profile.role).class"
+                            >
+                                {{ getRoleBadge(profile.role).text }}
+                            </span>
                         </div>
 
                         <!-- Username -->
@@ -116,6 +139,17 @@ watch(userId, (newId) => {
                                 <span class="tw-text-gray-500 tw-text-sm">Постов</span>
                             </div>
                         </div>
+
+                        <!-- Additional Info -->
+                        <div v-if="profile.phoneNumber || profile.branch" class="tw-mt-3 tw-text-gray-600 tw-text-sm tw-space-y-1">
+                            <p v-if="profile.phoneNumber">📱 {{ profile.phoneNumber }}</p>
+                            <p v-if="profile.branch">📍 {{ profile.branch }} <span v-if="profile.code">• Код: {{ profile.code }}</span></p>
+                            <p v-if="profile.isActive !== undefined">
+                                <span :class="profile.isActive ? 'tw-text-green-600' : 'tw-text-red-600'">
+                                    {{ profile.isActive ? '✅ Активен' : '❌ Неактивен' }}
+                                </span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -124,7 +158,7 @@ watch(userId, (newId) => {
             <div class="tw-border-t tw-border-gray-200">
                 <div class="tw-flex">
                     <button 
-                        class="tw-flex-1 tw-py-3 tw-flex tw-items-center tw-justify-center tw-gap-1 tw-font-medium tw-text-xs sm:tw-text-sm tw-border-b-2 tw-border-[#0891B2] tw-text-[#0891B2]"
+                        class="tw-flex-1 tw-py-3 tw-flex tw-items-center tw-justify-center tw-gap-1 tw-font-medium tw-text-xs sm:tw-text-sm tw-border-b-2 tw-border-[#F59E0B] tw-text-[#F59E0B]"
                     >
                         <span class="tw-text-base">📝</span>
                         Посты
@@ -158,7 +192,7 @@ watch(userId, (newId) => {
                             <!-- Post Header -->
                             <div 
                                 class="tw-p-4 tw-text-white"
-                                style="background: linear-gradient(135deg, #0891B2, #0e7490);"
+                                style="background: linear-gradient(135deg, #F59E0B, #D97706);"
                             >
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mb-2">
                                     <span class="tw-text-lg">📝</span>
@@ -177,7 +211,7 @@ watch(userId, (newId) => {
                                     <a 
                                         :href="post.link.startsWith('http') ? post.link : `https://${post.link}`" 
                                         target="_blank"
-                                        class="tw-text-[#0891B2] tw-text-sm tw-underline tw-break-all tw-line-clamp-2"
+                                        class="tw-text-[#F59E0B] tw-text-sm tw-underline tw-break-all tw-line-clamp-2"
                                     >
                                         {{ post.link }}
                                     </a>
@@ -208,10 +242,11 @@ watch(userId, (newId) => {
             <p class="tw-text-gray-500 tw-mb-4">Профиль не найден</p>
             <button 
                 @click="goBack"
-                class="tw-bg-[#0891B2] tw-text-white tw-px-6 tw-py-2 tw-rounded-xl"
+                class="tw-bg-[#F59E0B] tw-text-white tw-px-6 tw-py-2 tw-rounded-xl"
             >
                 ← Назад
             </button>
         </div>
     </div>
 </template>
+
