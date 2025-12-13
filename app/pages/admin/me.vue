@@ -86,9 +86,6 @@ onMounted(() => {
 
                         <!-- Buttons -->
                         <div class="tw-flex tw-gap-2 tw-mb-4 tw-flex-wrap">
-                            <button class="tw-px-4 tw-py-2 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-text-white/70 tw-font-medium tw-text-sm hover:tw-bg-white/10 tw-transition-all tw-flex tw-items-center tw-gap-2">
-                                <span>✏️</span> Изменить профиль
-                            </button>
                             <button @click="goBack" class="tw-px-4 tw-py-2 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-text-white/70 tw-font-medium tw-text-sm hover:tw-bg-white/10 tw-transition-all tw-flex tw-items-center tw-gap-2">
                                 <span>←</span> Назад
                             </button>
