@@ -4,7 +4,7 @@ definePageMeta({
     middleware: ['auth', 'user-active']
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 const { $axios } = useNuxtApp()
 const token = useCookie('token')
@@ -17,11 +17,11 @@ const submitting = ref(false)
 
 async function createPost() {
     if (!link.value.trim()) {
-        toast.warning('Введите ссылку', { position: 'top-center' as POSITION })
+        toast.warning('Введите ссылку', { position: 'top-center'  })
         return
     }
     if (!review.value.trim()) {
-        toast.warning('Введите отзыв', { position: 'top-center' as POSITION })
+        toast.warning('Введите отзыв', { position: 'top-center'  })
         return
     }
 
@@ -34,11 +34,11 @@ async function createPost() {
             },
             { headers: { 'Authorization': `Bearer ${token.value}` } }
         )
-        toast.success('Пост создан!', { position: 'top-center' as POSITION })
+        toast.success('Пост создан!', { position: 'top-center'  })
         router.push('/user/me')
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при создании поста', { position: 'top-center' as POSITION })
+        toast.error(error.response?.data?.message || 'Ошибка при создании поста', { position: 'top-center'  })
     } finally {
         submitting.value = false
     }

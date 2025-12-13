@@ -4,7 +4,7 @@ definePageMeta({
     middleware: ['auth', 'user-active']
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 interface Author {
     id: number
@@ -73,7 +73,7 @@ async function getPosts() {
         posts.value = Array.isArray(response.data) ? response.data : [response.data]
     } catch (error: any) {
         console.error(error)
-        toast.error('Ошибка при загрузке постов', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при загрузке постов', { position: 'top-center'  })
         posts.value = []
     } finally {
         loading.value = false
@@ -125,7 +125,7 @@ async function savePost(postId: number) {
         await $axios.post(`post/save/${postId}`, {}, {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
-        toast.success('Пост сохранён!', { position: 'top-center' as POSITION })
+        toast.success('Пост сохранён!', { position: 'top-center'  })
     } catch (error: any) {
         console.error(error)
     }

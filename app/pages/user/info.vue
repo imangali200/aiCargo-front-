@@ -4,7 +4,7 @@ definePageMeta({
     middleware: ['auth', 'user-active']
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 const toast = useToast()
 const router = useRouter()
@@ -16,10 +16,10 @@ async function copyAddress() {
     try {
         await navigator.clipboard.writeText(warehouseAddress)
         copied.value = true
-        toast.success('Адрес скопирован!', { position: 'top-center' as POSITION })
+        toast.success('Адрес скопирован!', { position: 'top-center'  })
         setTimeout(() => { copied.value = false }, 2000)
     } catch (error) {
-        toast.error('Ошибка при копировании', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при копировании', { position: 'top-center'  })
     }
 }
 

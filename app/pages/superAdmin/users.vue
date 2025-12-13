@@ -4,7 +4,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 const { $axios } = useNuxtApp()
 const token = useCookie('token')
 const router = useRouter()
@@ -91,7 +91,7 @@ const deleteUser = async (id: number) => {
         await $axios.delete(`user/${id}`, {
             headers: { Authorization: `Bearer ${token.value}` }
         })
-        toast.success('Успешно удалено', { position: 'top-center' as POSITION })
+        toast.success('Успешно удалено', { position: 'top-center'  })
         getUsers()
     } catch (error) {
         console.log(error)
@@ -104,7 +104,7 @@ const disactive = async (id: number) => {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
         if (resActive.status === 200) {
-            toast.success('Статус пользователя изменен', { position: 'top-center' as POSITION })
+            toast.success('Статус пользователя изменен', { position: 'top-center'  })
             getUsers()
         }
     } catch (error) {

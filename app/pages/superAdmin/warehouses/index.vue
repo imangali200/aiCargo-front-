@@ -4,7 +4,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { useToast, POSITION } from 'vue-toastification';
+import { useToast } from '~/composables/useToast';
 import type { Branch } from '~/pages/auth/register.vue';
 
 const token = useCookie('token')
@@ -22,7 +22,7 @@ async function getBranches() {
         branchData.value = res.data
     } catch (error) {
         console.log(error)
-        toast.error('Ошибка при загрузке складов', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при загрузке складов', { position: 'top-center'  })
     } finally {
         loading.value = false
     }
@@ -35,12 +35,12 @@ const removeBranch = async (id: number) => {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
         if (branchRes.status === 200) {
-            toast.success('Успешно удалено', { position: 'top-center' as POSITION })
+            toast.success('Успешно удалено', { position: 'top-center'  })
         }
         getBranches()
     } catch (error) {
         console.log(error)
-        toast.error('Ошибка при удалении', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при удалении', { position: 'top-center'  })
     }
 }
 

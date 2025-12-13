@@ -4,7 +4,7 @@ definePageMeta({
     middleware: ['auth', 'user-active']
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 interface Product {
     id: number
@@ -35,7 +35,7 @@ async function getProduct() {
         product.value = response.data
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при загрузке', { position: 'top-center' as POSITION })
+        toast.error(error.response?.data?.message || 'Ошибка при загрузке', { position: 'top-center'  })
     } finally {
         loading.value = false
     }

@@ -5,7 +5,7 @@ definePageMeta({
 })
 
 import type { Branch } from '../auth/register.vue'
-import { useToast, POSITION } from "vue-toastification";
+import { useToast } from "~/composables/useToast";
 
 const { $axios } = useNuxtApp()
 const toast = useToast();
@@ -35,7 +35,7 @@ async function getBranches() {
         branches.value = res.data
     } catch (error) {
         console.error(error)
-        toast.error('Ошибка при загрузке складов', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при загрузке складов', { position: 'top-center'  })
     } finally {
         loading.value = false
     }
@@ -63,11 +63,11 @@ const createUser = async () => {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
 
-        toast.success('Пользователь успешно создан!', { position: "top-center" as POSITION, timeout: 3000 })
+        toast.success('Пользователь успешно создан!', { position: "top-center" , timeout: 3000 })
         return navigateTo('/superAdmin/users')
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при создании пользователя', { position: 'top-center' as POSITION })
+        toast.error(error.response?.data?.message || 'Ошибка при создании пользователя', { position: 'top-center'  })
     } finally {
         submitting.value = false
     }

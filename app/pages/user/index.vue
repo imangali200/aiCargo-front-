@@ -4,7 +4,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 interface Product {
     id: number
@@ -68,7 +68,7 @@ async function getMyProducts() {
     } catch (error: any) {
         console.error(error)
         if (error.response?.status !== 404) {
-            toast.error('Ошибка при загрузке треков', { position: 'top-center' as POSITION })
+            toast.error('Ошибка при загрузке треков', { position: 'top-center'  })
         }
         products.value = []
     } finally {
@@ -78,11 +78,11 @@ async function getMyProducts() {
 
 async function addTrack() {
     if (!newTrackCode.value.trim()) {
-        toast.warning('Введите трек-код', { position: 'top-center' as POSITION })
+        toast.warning('Введите трек-код', { position: 'top-center'  })
         return
     }
     if (!newDescription.value.trim()) {
-        toast.warning('Введите описание товара', { position: 'top-center' as POSITION })
+        toast.warning('Введите описание товара', { position: 'top-center'  })
         return
     }
     
@@ -92,14 +92,14 @@ async function addTrack() {
             { productId: newTrackCode.value.trim(), productName: newDescription.value.trim() },
             { headers: { 'Authorization': `Bearer ${token.value}` } }
         )
-        toast.success('Трек-код успешно добавлен!', { position: 'top-center' as POSITION })
+        toast.success('Трек-код успешно добавлен!', { position: 'top-center'  })
         newTrackCode.value = ''
         newDescription.value = ''
         showAddModal.value = false
         await getMyProducts()
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при добавлении трека', { position: 'top-center' as POSITION })
+        toast.error(error.response?.data?.message || 'Ошибка при добавлении трека', { position: 'top-center'  })
     } finally {
         addLoading.value = false
     }
@@ -122,10 +122,10 @@ async function searchTrack() {
     } catch (error: any) {
         console.error(error)
         if (error.response?.status === 404) {
-            toast.warning('Трек не найден', { position: 'top-center' as POSITION })
+            toast.warning('Трек не найден', { position: 'top-center'  })
             products.value = []
         } else {
-            toast.error('Ошибка при поиске', { position: 'top-center' as POSITION })
+            toast.error('Ошибка при поиске', { position: 'top-center'  })
         }
         isSearchMode.value = true
     } finally {
@@ -140,11 +140,11 @@ async function deleteTrack(productId: string) {
         await $axios.delete(`products/${productId}`, {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
-        toast.success('Трек удалён', { position: 'top-center' as POSITION })
+        toast.success('Трек удалён', { position: 'top-center'  })
         await getMyProducts()
     } catch (error: any) {
         console.error(error)
-        toast.error('Ошибка при удалении', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при удалении', { position: 'top-center'  })
     }
 }
 

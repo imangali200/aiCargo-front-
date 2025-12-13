@@ -4,7 +4,7 @@ definePageMeta({
     middleware: 'auth'
 })
 import type { User } from '../users.vue'
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 const toast = useToast()
 const router = useRouter()
 const { $axios } = useNuxtApp()
@@ -36,8 +36,7 @@ async function getFreeAdmins() {
             adminList.value = []
         } else {
             toast.error('Ошибка при загрузке администраторов', {
-                position: 'top-center' as POSITION
-            })
+                position: 'top-center'             })
         }
     } finally {
         loading.value = false
@@ -64,14 +63,12 @@ const createBranch = async () => {
         })
         
         toast.success('Филиал успешно создан', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
         return navigateTo('/superAdmin/warehouses')
     } catch (error: any) {
         console.log(error)
         toast.error(error.response?.data?.message || 'Ошибка при создании филиала', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
     } finally {
         submitting.value = false
     }

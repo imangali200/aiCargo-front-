@@ -4,7 +4,7 @@ definePageMeta({
     middleware: ['auth', 'user-active']
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 interface Post {
     id: number
@@ -56,7 +56,7 @@ async function getProfile() {
         profile.value = response.data
     } catch (error: any) {
         console.error(error)
-        toast.error('Ошибка при загрузке профиля', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при загрузке профиля', { position: 'top-center'  })
     } finally {
         loading.value = false
     }

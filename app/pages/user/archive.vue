@@ -4,7 +4,7 @@ definePageMeta({
     middleware: ['auth', 'user-active']
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 interface Product {
     id: number
@@ -44,7 +44,7 @@ async function getArchiveProducts() {
     } catch (error: any) {
         console.error(error)
         if (error.response?.status !== 404) {
-            toast.error('Ошибка при загрузке архива', { position: 'top-center' as POSITION })
+            toast.error('Ошибка при загрузке архива', { position: 'top-center'  })
         }
         products.value = []
     } finally {
@@ -58,11 +58,11 @@ async function restoreProduct(productId: string) {
         await $axios.post(`products/${productId}/restore`, {}, {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
-        toast.success('Трек восстановлен', { position: 'top-center' as POSITION })
+        toast.success('Трек восстановлен', { position: 'top-center'  })
         await getArchiveProducts()
     } catch (error: any) {
         console.error(error)
-        toast.error('Ошибка при восстановлении', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при восстановлении', { position: 'top-center'  })
     }
 }
 

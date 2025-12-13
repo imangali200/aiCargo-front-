@@ -6,7 +6,7 @@ definePageMeta({
 
 import type { Branch } from "~/pages/auth/register.vue";
 import type { User } from "../users.vue";
-import { useToast, POSITION } from "vue-toastification";
+import { useToast } from "~/composables/useToast";
 
 const { $axios } = useNuxtApp()
 const toast = useToast();
@@ -59,7 +59,7 @@ async function getUserById() {
         oldData.value = user
     } catch (error: any) {
         console.error(error)
-        toast.error('Ошибка при загрузке пользователя', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при загрузке пользователя', { position: 'top-center'  })
     } finally {
         loading.value = false
     }
@@ -87,11 +87,11 @@ const updateUser = async () => {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
 
-        toast.success('Пользователь успешно обновлён', { position: 'top-center' as POSITION })
+        toast.success('Пользователь успешно обновлён', { position: 'top-center'  })
         return navigateTo('/superAdmin/users')
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при обновлении', { position: 'top-center' as POSITION })
+        toast.error(error.response?.data?.message || 'Ошибка при обновлении', { position: 'top-center'  })
     } finally {
         submitting.value = false
     }

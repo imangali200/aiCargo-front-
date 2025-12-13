@@ -4,7 +4,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 const { $axios } = useNuxtApp()
 const token = useCookie('token')
 const router = useRouter()
@@ -61,8 +61,7 @@ async function getProducts() {
     } catch (error) {
         console.error(error)
         toast.error('Ошибка при загрузке товаров', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
     } finally {
         loading.value = false
     }
@@ -70,7 +69,7 @@ async function getProducts() {
 
 const search = async () => {
     if (!searchValue.value.trim()) {
-        toast.warning('Введите трек-код', { position: 'top-center' as POSITION })
+        toast.warning('Введите трек-код', { position: 'top-center'  })
         return
     }
     
@@ -87,9 +86,9 @@ const search = async () => {
         console.error(error)
         if (error.response?.status === 404) {
             products.value = []
-            toast.warning('Товар не найден', { position: 'top-center' as POSITION })
+            toast.warning('Товар не найден', { position: 'top-center'  })
         } else {
-            toast.error('Ошибка при поиске', { position: 'top-center' as POSITION })
+            toast.error('Ошибка при поиске', { position: 'top-center'  })
         }
         removeSearchButton.value = true
     } finally {

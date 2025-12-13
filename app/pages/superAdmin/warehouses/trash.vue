@@ -3,7 +3,7 @@ definePageMeta({
     layout: 'default',
     middleware: 'auth'
 })
-import { useToast, POSITION } from 'vue-toastification';
+import { useToast } from '~/composables/useToast';
 import type { Branch } from '~/pages/auth/register.vue';
 const token = useCookie('token')
 const { $axios } = useNuxtApp()
@@ -23,8 +23,7 @@ async function getBranches() {
     } catch (error) {
         console.error(error)
         toast.error('Ошибка при загрузке данных', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
     } finally {
         loading.value = false
     }
@@ -38,14 +37,12 @@ const restoreBranch = async (id: number) => {
             }
         })
         toast.success('Филиал успешно восстановлен', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
         getBranches()
     } catch (error: any) {
         console.error(error)
         toast.error(error.response?.data?.message || 'Ошибка при восстановлении филиала', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
     }
 }
 

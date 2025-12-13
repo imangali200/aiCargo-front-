@@ -5,7 +5,7 @@
 })
 
 import type { User } from './users.vue'
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 const toast = useToast()
 const { $axios } = useNuxtApp()
@@ -43,12 +43,12 @@ const restoreUser = async (id: number) => {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
         if (restoreData.status === 200) {
-            toast.success('Пользователь восстановлен', { position: 'top-center' as POSITION })
+            toast.success('Пользователь восстановлен', { position: 'top-center'  })
         }
         getKorzina()
     } catch (error) {
         console.log(error)
-        toast.error('Ошибка при восстановлении', { position: 'top-center' as POSITION })
+        toast.error('Ошибка при восстановлении', { position: 'top-center'  })
     }
 }
 

@@ -5,7 +5,7 @@ definePageMeta({
 })
 
 import type { Products } from '../tracks.vue'
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from '~/composables/useToast'
 
 const route = useRoute()
 const router = useRouter()
@@ -29,8 +29,7 @@ async function getProduct() {
     } catch (error: any) {
         console.error(error)
         toast.error(error.response?.data?.message || 'Ошибка при загрузке товара', {
-            position: 'top-center' as POSITION
-        })
+            position: 'top-center'         })
     } finally {
         loading.value = false
     }
