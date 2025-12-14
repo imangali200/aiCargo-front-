@@ -23,8 +23,18 @@ export interface User {
     deletedAt: null | string
 }
 
+export interface Branch {
+    branchName: string
+    deleteAt: string
+    id: number
+    responsibleName: string
+}
+
 const toast = useToast()
 const users = ref<User[]>([])
+const allUsers = ref<User[]>([])
+const branches = ref<Branch[]>([])
+const selectedBranch = ref<string>('')
 const currentPage = ref(1)
 const perPage = 20
 const loading = ref(false)
@@ -51,6 +61,17 @@ function changePage(page: number) {
     }
 }
 
+async function getBranches() {
+    try {
+        const res = await $axios.get('branch', {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        branches.value = res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 async function getUsers() {
     loading.value = true
     try {
@@ -62,13 +83,24 @@ async function getUsers() {
             ...response.data.filter((u: User) => u.role === 'admin'),
             ...response.data.filter((u: User) => u.role === 'user')
         ]
+        allUsers.value = sortedUsers
         users.value = sortedUsers
         searchValue.value = ''
         removeSearchButton.value = false
+        selectedBranch.value = ''
     } catch (error) {
         console.log(error)
     } finally {
         loading.value = false
+    }
+}
+
+const filterByBranch = () => {
+    currentPage.value = 1
+    if (!selectedBranch.value) {
+        users.value = allUsers.value
+    } else {
+        users.value = allUsers.value.filter(user => user.branch === selectedBranch.value)
     }
 }
 
@@ -78,7 +110,12 @@ const search = async () => {
             params: { search: searchValue.value },
             headers: { Authorization: `Bearer ${token.value}` }
         })
-        users.value = res.data
+        // If branch filter is active, apply it to search results
+        if (selectedBranch.value) {
+            users.value = res.data.filter((user: User) => user.branch === selectedBranch.value)
+        } else {
+            users.value = res.data
+        }
         removeSearchButton.value = true
     } catch (error) {
         console.log(error)
@@ -121,6 +158,7 @@ const formatData = (time: string) => {
 }
 
 onMounted(() => {
+    getBranches()
     getUsers()
 })
 </script>
@@ -150,6 +188,20 @@ onMounted(() => {
                         <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
+            </div>
+
+            <!-- Branch Filter -->
+            <div class="tw-min-w-[200px]">
+                <select 
+                    v-model="selectedBranch" 
+                    @change="filterByBranch"
+                    class="tw-w-full tw-h-11 tw-px-4 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-text-white tw-outline-none focus:tw-border-violet-500 tw-transition-all tw-cursor-pointer tw-text-sm"
+                >
+                    <option value="" class="tw-bg-[#1e293b]">Все склады</option>
+                    <option v-for="branch in branches" :key="branch.id" :value="branch.branchName" class="tw-bg-[#1e293b]">
+                        {{ branch.branchName }}
+                    </option>
+                </select>
             </div>
 
             <div class="tw-flex tw-gap-3">

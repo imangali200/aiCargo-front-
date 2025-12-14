@@ -175,7 +175,7 @@ const uploadFile = async () => {
     formData.append("time", formatTimeForApi(selectedTime.value))
 
     await $axios.post(
-      "/admin/tracks/uploads",
+      "/admin/tracks/uploads-taraz",
       formData,
       {
         headers: {
