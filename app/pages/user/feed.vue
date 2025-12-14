@@ -39,6 +39,22 @@ const router = useRouter()
 const posts = ref<Post[]>([])
 const loading = ref(false)
 const currentUser = ref<Author | null>(null)
+const feedMode = ref<'trending' | 'recent'>('trending') // 'trending' = by likes, 'recent' = by date
+
+// Sorted posts based on feed mode
+const sortedPosts = computed(() => {
+    if (!posts.value.length) return []
+    
+    if (feedMode.value === 'trending') {
+        // Sort by likes count (highest first) - TikTok style "For You"
+        return [...posts.value].sort((a, b) => b.likesCount - a.likesCount)
+    } else {
+        // Sort by date (newest first)
+        return [...posts.value].sort((a, b) => 
+            new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+        )
+    }
+})
 
 // Comment states
 const showComments = ref(false)
@@ -232,30 +248,71 @@ onMounted(() => {
             </div>
         </div>
 
+        <!-- Fixed Header with Tabs - Always visible when not loading -->
+        <div v-if="!loading" class="tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-z-30 tw-flex tw-items-center tw-justify-between tw-px-4 tw-py-4">
+            <!-- Back button -->
+            <button 
+                @click="goBack"
+                class="tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white tw-text-lg hover:tw-scale-110 tw-transition-transform"
+                style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);"
+            >
+                ←
+            </button>
+
+            <!-- Feed Mode Tabs - TikTok style -->
+            <div class="tw-flex tw-gap-6" style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px;">
+                <button 
+                    @click="feedMode = 'trending'"
+                    :class="[
+                        'tw-text-base tw-font-bold tw-transition-all tw-pb-1',
+                        feedMode === 'trending' 
+                            ? 'tw-text-white tw-border-b-2 tw-border-white' 
+                            : 'tw-text-white/50'
+                    ]"
+                >
+                    🔥 Рек
+                </button>
+                <button 
+                    @click="feedMode = 'recent'"
+                    :class="[
+                        'tw-text-base tw-font-bold tw-transition-all tw-pb-1',
+                        feedMode === 'recent' 
+                            ? 'tw-text-white tw-border-b-2 tw-border-white' 
+                            : 'tw-text-white/50'
+                    ]"
+                >
+                    🕐 Жаңа
+                </button>
+            </div>
+
+            <!-- Spacer for balance -->
+            <div class="tw-w-10"></div>
+        </div>
+
         <!-- Empty state -->
-        <div v-else-if="!posts.length" class="tw-h-full tw-flex tw-items-center tw-justify-center">
+        <div v-if="!loading && !sortedPosts.length" class="tw-h-full tw-flex tw-items-center tw-justify-center">
             <div class="tw-text-center">
                 <div class="tw-text-6xl tw-mb-4">📝</div>
-                <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Нет постов</h3>
-                <p class="tw-text-gray-400 tw-mb-6">Будьте первым, кто создаст пост!</p>
+                <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Пост жоқ</h3>
+                <p class="tw-text-gray-400 tw-mb-6">Бірінші болып пост жасаңыз!</p>
                 <button 
                     @click="goBack"
                     class="tw-bg-[#0891B2] tw-text-white tw-px-6 tw-py-3 tw-rounded-xl tw-font-medium hover:tw-bg-[#0e7490] tw-transition-colors"
                 >
-                    ← Назад
+                    ← Артқа
                 </button>
             </div>
         </div>
 
         <!-- Posts Feed (TikTok style) -->
         <div 
-            v-else 
+            v-if="!loading && sortedPosts.length" 
             class="tw-h-full tw-overflow-y-scroll tw-snap-y tw-snap-mandatory"
             style="scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch;"
         >
             <div 
-                v-for="(post, index) in posts" 
-                :key="post.id"
+                v-for="(post, index) in sortedPosts" 
+                :key="post.id + '-' + feedMode"
                 :id="`post-${index}`"
                 class="tw-h-full tw-snap-start tw-snap-always tw-relative tw-flex tw-items-end tw-justify-center"
                 style="scroll-snap-align: start; min-height: 100vh;"
@@ -265,15 +322,6 @@ onMounted(() => {
                     class="tw-absolute tw-inset-0"
                     :style="`background: linear-gradient(135deg, hsl(${(post.id * 40) % 360}, 60%, 25%), hsl(${(post.id * 40 + 60) % 360}, 60%, 15%));`"
                 ></div>
-
-                <!-- Back button - INSIDE gradient -->
-                <button 
-                    @click="goBack"
-                    class="tw-absolute tw-top-4 tw-left-4 tw-z-20 tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white tw-text-lg hover:tw-scale-110 tw-transition-transform"
-                    style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);"
-                >
-                    ←
-                </button>
 
                 <!-- Content - Centered on desktop -->
                 <div class="tw-relative tw-z-10 tw-w-full tw-max-w-2xl tw-px-5 tw-pb-8 tw-pr-20">
@@ -300,7 +348,7 @@ onMounted(() => {
                             <p class="tw-text-white tw-font-semibold group-hover:tw-underline">
                                 @{{ post.author?.name || 'user' }}
                             </p>
-                            <p class="tw-text-white/50 tw-text-xs">{{ formatDate(post.createAt) }}</p>
+                            <p class="tw-text-white/70 tw-text-xs">{{ formatDate(post.createAt) }}</p>
                         </div>
                     </div>
 
@@ -362,7 +410,7 @@ onMounted(() => {
                             class="tw-w-12 tw-h-12 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-2xl group-hover:tw-scale-110 tw-transition-all"
                             style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);"
                         >
-                            ➕
+                            🔖
                         </div>
                     </button>
                 </div>

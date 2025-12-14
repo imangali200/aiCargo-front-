@@ -60,8 +60,7 @@ async function getProducts() {
         currentPage.value = 1
     } catch (error) {
         console.error(error)
-        toast.error('Ошибка при загрузке товаров', {
-            position: 'top-center'         })
+        toast.error('Ошибка при загрузке товаров', { position: 'top-center' })
     } finally {
         loading.value = false
     }
@@ -69,7 +68,7 @@ async function getProducts() {
 
 const search = async () => {
     if (!searchValue.value.trim()) {
-        toast.warning('Введите трек-код', { position: 'top-center'  })
+        toast.warning('Введите трек-код', { position: 'top-center' })
         return
     }
     
@@ -86,9 +85,9 @@ const search = async () => {
         console.error(error)
         if (error.response?.status === 404) {
             products.value = []
-            toast.warning('Товар не найден', { position: 'top-center'  })
+            toast.warning('Товар не найден', { position: 'top-center' })
         } else {
-            toast.error('Ошибка при поиске', { position: 'top-center'  })
+            toast.error('Ошибка при поиске', { position: 'top-center' })
         }
         removeSearchButton.value = true
     } finally {
@@ -101,10 +100,10 @@ const toHistory = (productId: string) => {
 }
 
 const getProductStatus = (product: Products) => {
-    if (product.given_to_client) return { text: 'Выдан клиенту', date: product.given_to_client, color: 'tw-text-green-600' }
-    if (product.aicargo) return { text: 'На складе AiCargo', date: product.aicargo, color: 'tw-text-blue-600' }
-    if (product.china_warehouse) return { text: 'Склад в Китае', date: product.china_warehouse, color: 'tw-text-orange-500' }
-    return { text: 'Зарегистрирован', date: product.client_registered, color: 'tw-text-gray-500' }
+    if (product.given_to_client) return { text: 'Выдан клиенту', date: product.given_to_client, class: 'tw-text-emerald-400' }
+    if (product.aicargo) return { text: 'На складе AiCargo', date: product.aicargo, class: 'tw-text-cyan-400' }
+    if (product.china_warehouse) return { text: 'Склад в Китае', date: product.china_warehouse, class: 'tw-text-amber-400' }
+    return { text: 'Зарегистрирован', date: product.client_registered, class: 'tw-text-white/60' }
 }
 
 const formatDate = (time: string) => {
@@ -125,150 +124,155 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="tw-pt-7 tw-px-2 sm:tw-px-0">
-        <!-- Навигация -->
-        <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm">
-            <router-link class="tw-text-blue-600 hover:tw-underline" to="/superAdmin">Главная</router-link>
-            <span>⤑</span>
-            <span class="tw-text-gray-400">Товары</span>
+    <div class="tw-py-6 animate-fadeIn">
+        <!-- Header -->
+        <div class="tw-mb-6">
+            <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
+                <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/superAdmin">Главная</router-link>
+                <span class="tw-text-white/60">→</span>
+                <span class="tw-text-white/60">Товары</span>
+            </div>
+            <h1 class="tw-text-2xl tw-font-bold tw-text-white tw-mb-2">Все товары</h1>
+            <p class="tw-text-white/60">Управление треками и посылками</p>
         </div>
 
-        <!-- Іздеу -->
-        <div class="tw-flex tw-flex-col sm:tw-flex-row tw-gap-2 tw-mt-4">
-            <input 
-                @keyup.enter="search" 
-                v-model="searchValue"
-                class="tw-h-[36px] tw-w-full sm:tw-w-[250px] tw-border tw-rounded-lg tw-border-gray-300 tw-px-3"
-                placeholder="Поиск по трек-коду" 
-                type="text"
-            >
-            <div class="tw-flex tw-gap-2">
-                <button 
-                    @click="search"
-                    :disabled="loading"
-                    class="tw-bg-[#0891B2] tw-text-white tw-h-[36px] tw-px-4 tw-rounded-lg tw-flex-1 sm:tw-flex-none disabled:tw-opacity-50"
+        <!-- Search -->
+        <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-4 tw-mb-6">
+            <div class="tw-flex tw-flex-col sm:tw-flex-row tw-gap-3">
+                <input 
+                    @keyup.enter="search" 
+                    v-model="searchValue"
+                    class="tw-flex-1 sm:tw-max-w-xs tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-2.5 tw-text-white tw-outline-none focus:tw-border-cyan-500/50 tw-transition-colors placeholder:tw-text-white/40"
+                    placeholder="Поиск по трек-коду" 
+                    type="text"
                 >
-                    Найти
-                </button>
-                <button 
-                    @click="getProducts" 
-                    v-if="removeSearchButton"
-                    class="tw-bg-red-600 tw-text-white tw-h-[36px] tw-px-3 tw-rounded-lg"
-                >
-                    ✕
-                </button>
+                <div class="tw-flex tw-gap-2">
+                    <button 
+                        @click="search"
+                        :disabled="loading"
+                        class="tw-px-5 tw-py-2.5 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-font-medium hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all disabled:tw-opacity-50"
+                    >
+                        Найти
+                    </button>
+                    <button 
+                        @click="getProducts" 
+                        v-if="removeSearchButton"
+                        class="tw-px-4 tw-py-2.5 tw-bg-red-500/20 tw-border tw-border-red-500/30 tw-rounded-xl tw-text-red-400 hover:tw-bg-red-500/30 tw-transition-all"
+                    >
+                        ✕
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Loading -->
-        <div v-if="loading" class="tw-mt-6 tw-text-center tw-py-8">
-            <div class="tw-inline-block tw-animate-spin tw-rounded-full tw-h-8 tw-w-8 tw-border-4 tw-border-[#0891B2] tw-border-t-transparent"></div>
-            <p class="tw-mt-2 tw-text-gray-500">Загрузка...</p>
+        <div v-if="loading" class="tw-text-center tw-py-16">
+            <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
+            <p class="tw-mt-4 tw-text-white/60">Жүктелуде...</p>
         </div>
 
-        <div v-else class="tw-mt-4 tw-border-t tw-border-gray-200 tw-pt-4">
-            <p class="tw-text-gray-500 tw-text-sm">Показано {{ paginatedProducts.length }} из {{ products.length }}</p>
-
-            <!-- 📱 Mobile: Cards -->
-            <div class="tw-block lg:tw-hidden tw-mt-4 tw-space-y-3">
-                <div 
-                    v-for="product in paginatedProducts" 
-                    :key="'mobile-' + product.id"
-                    class="tw-bg-white tw-rounded-xl tw-shadow tw-p-4"
-                >
-                    <!-- Header -->
-                    <div class="tw-flex tw-justify-between tw-items-start tw-mb-3">
-                        <div>
-                            <p class="tw-font-mono tw-font-semibold tw-text-gray-800">{{ product.productId }}</p>
-                            <p class="tw-text-xs tw-text-gray-400">ID: {{ product.id }}</p>
-                        </div>
-                        <span 
-                            :class="getProductStatus(product).color"
-                            class="tw-text-xs tw-font-medium"
-                        >
-                            {{ getProductStatus(product).text }}
-                        </span>
-                    </div>
-
-                    <!-- Info -->
-                    <div class="tw-grid tw-grid-cols-2 tw-gap-2 tw-text-sm tw-mb-3">
-                        <div>
-                            <p class="tw-text-gray-400 tw-text-xs">Создан</p>
-                            <p class="tw-text-gray-700 tw-text-xs">{{ formatDate(product.client_registered) }}</p>
-                        </div>
-                        <div>
-                            <p class="tw-text-gray-400 tw-text-xs">Последнее обновление</p>
-                            <p class="tw-text-gray-700 tw-text-xs">{{ formatDate(getProductStatus(product).date) }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <button 
-                        @click="toHistory(product.productId)"
-                        class="tw-w-full tw-bg-[#0891B2] tw-text-white tw-py-2 tw-rounded-lg tw-text-sm hover:tw-bg-[#0e7490] tw-transition-colors"
-                    >
-                        История
-                    </button>
-                </div>
-
-                <!-- Empty -->
-                <div v-if="!paginatedProducts.length" class="tw-text-center tw-py-8 tw-text-gray-400">
-                    <p class="tw-text-4xl tw-mb-2">📦</p>
-                    <p>Товары не найдены</p>
-                </div>
+        <!-- Content -->
+        <div v-else>
+            <!-- Stats -->
+            <div class="tw-mb-4 tw-text-white/60 tw-text-sm">
+                Көрсетілуде {{ paginatedProducts.length }} / {{ products.length }}
             </div>
 
-            <!-- 💻 Desktop: Table -->
-            <div class="tw-hidden lg:tw-block tw-overflow-x-auto tw-mt-4">
-                <table class="tw-min-w-full tw-border tw-border-gray-300 tw-border-collapse">
-                    <thead class="tw-bg-gray-100">
-                        <tr>
-                            <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">#ID</th>
-                            <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">Трек-код</th>
-                            <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">Состояние</th>
-                            <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">Дата создания</th>
-                            <th class="tw-border tw-border-gray-300 tw-px-4 tw-py-2 tw-text-left">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="product in paginatedProducts" :key="'desktop-' + product.id" class="hover:tw-bg-gray-50">
-                            <td class="tw-border tw-text-sm tw-border-gray-300 tw-px-4 tw-py-2">{{ product.id }}</td>
-                            <td class="tw-border tw-text-sm tw-border-gray-300 tw-px-4 tw-py-2 tw-font-mono">{{ product.productId }}</td>
-                            <td class="tw-border tw-text-sm tw-border-gray-300 tw-px-4 tw-py-2">
-                                <span :class="getProductStatus(product).color" class="tw-font-medium">
+            <!-- Table Card -->
+            <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-overflow-hidden">
+                <!-- Table Header -->
+                <div class="tw-hidden sm:tw-grid tw-grid-cols-12 tw-gap-4 tw-px-5 tw-py-3 tw-bg-white/[0.02] tw-border-b tw-border-white/10">
+                    <span class="tw-col-span-1 tw-text-white/60 tw-text-sm tw-font-medium">#ID</span>
+                    <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Трек-код</span>
+                    <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Состояние</span>
+                    <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Дата создания</span>
+                    <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Действия</span>
+                </div>
+
+                <!-- Table Body -->
+                <div class="tw-divide-y tw-divide-white/5">
+                    <div 
+                        v-for="product in paginatedProducts" 
+                        :key="product.id" 
+                        class="tw-px-5 tw-py-4 hover:tw-bg-white/[0.02] tw-transition-colors"
+                    >
+                        <!-- Desktop View -->
+                        <div class="tw-hidden sm:tw-grid tw-grid-cols-12 tw-gap-4 tw-items-center">
+                            <div class="tw-col-span-1">
+                                <span class="tw-text-white/60 tw-text-sm">{{ product.id }}</span>
+                            </div>
+                            <div class="tw-col-span-3">
+                                <span class="tw-text-white tw-font-mono tw-font-medium">{{ product.productId }}</span>
+                            </div>
+                            <div class="tw-col-span-3">
+                                <span :class="getProductStatus(product).class" class="tw-font-medium">
                                     {{ getProductStatus(product).text }}
                                 </span>
-                                <span class="tw-text-gray-400 tw-text-xs tw-block">
+                                <span class="tw-text-white/40 tw-text-xs tw-block">
                                     {{ formatDate(getProductStatus(product).date) }}
                                 </span>
-                            </td>
-                            <td class="tw-border tw-text-sm tw-border-gray-300 tw-px-4 tw-py-2">
-                                {{ formatDate(product.client_registered) }}
-                            </td>
-                            <td class="tw-border tw-border-gray-300 tw-px-4 tw-py-2">
+                            </div>
+                            <div class="tw-col-span-3">
+                                <span class="tw-text-white/60 tw-text-sm">{{ formatDate(product.client_registered) }}</span>
+                            </div>
+                            <div class="tw-col-span-2">
                                 <button 
                                     @click="toHistory(product.productId)"
-                                    class="tw-bg-[#0891B2] tw-text-white tw-px-3 tw-py-1 tw-rounded-lg tw-text-sm hover:tw-bg-[#0e7490] tw-transition-colors"
+                                    class="tw-px-4 tw-py-2 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-text-sm tw-font-medium hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all"
                                 >
                                     История
                                 </button>
-                            </td>
-                        </tr>
-                        <tr v-if="!paginatedProducts.length">
-                            <td colspan="5" class="tw-text-center tw-py-8 tw-text-gray-400">
-                                Товары не найдены
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+
+                        <!-- Mobile View -->
+                        <div class="tw-block sm:tw-hidden">
+                            <div class="tw-flex tw-justify-between tw-items-start tw-mb-3">
+                                <div>
+                                    <p class="tw-text-white tw-font-mono tw-font-semibold">{{ product.productId }}</p>
+                                    <p class="tw-text-xs tw-text-white/40">ID: {{ product.id }}</p>
+                                </div>
+                                <span :class="getProductStatus(product).class" class="tw-text-xs tw-font-medium">
+                                    {{ getProductStatus(product).text }}
+                                </span>
+                            </div>
+                            <div class="tw-grid tw-grid-cols-2 tw-gap-2 tw-text-sm tw-mb-3">
+                                <div>
+                                    <p class="tw-text-white/40 tw-text-xs">Создан</p>
+                                    <p class="tw-text-white/70 tw-text-xs">{{ formatDate(product.client_registered) }}</p>
+                                </div>
+                                <div>
+                                    <p class="tw-text-white/40 tw-text-xs">Обновлён</p>
+                                    <p class="tw-text-white/70 tw-text-xs">{{ formatDate(getProductStatus(product).date) }}</p>
+                                </div>
+                            </div>
+                            <button 
+                                @click="toHistory(product.productId)"
+                                class="tw-w-full tw-py-2.5 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-text-sm tw-font-medium hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all"
+                            >
+                                История
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div v-if="!paginatedProducts.length" class="tw-px-5 tw-py-16 tw-text-center">
+                        <div class="tw-w-16 tw-h-16 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mx-auto tw-mb-4">
+                            <svg class="tw-w-8 tw-h-8 tw-text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <p class="tw-text-white/60">Товары не найдены</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Pagination -->
-            <div v-if="totalPages > 1" class="tw-flex tw-justify-center tw-items-center tw-gap-1 sm:tw-gap-2 tw-mt-6 tw-flex-wrap">
+            <div v-if="totalPages > 1" class="tw-flex tw-justify-center tw-items-center tw-gap-2 tw-mt-6 tw-flex-wrap">
                 <button 
                     @click="changePage(currentPage - 1)" 
                     :disabled="currentPage === 1"
-                    class="tw-px-3 tw-py-2 tw-rounded-lg tw-bg-gray-200 disabled:tw-opacity-50 disabled:tw-cursor-not-allowed tw-text-sm"
+                    class="tw-px-4 tw-py-2 tw-rounded-xl tw-bg-white/5 tw-border tw-border-white/10 tw-text-white/60 disabled:tw-opacity-30 disabled:tw-cursor-not-allowed hover:tw-bg-white/10 tw-transition-all"
                 >
                     ←
                 </button>
@@ -277,29 +281,40 @@ onMounted(() => {
                     <button 
                         v-if="page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)"
                         @click="changePage(page)"
-                        :class="page === currentPage ? 'tw-bg-[#0891B2] tw-text-white' : 'tw-bg-gray-200'"
-                        class="tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-min-w-[40px]"
+                        :class="page === currentPage ? 'tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-text-white tw-shadow-lg tw-shadow-cyan-500/30' : 'tw-bg-white/5 tw-border tw-border-white/10 tw-text-white/60 hover:tw-bg-white/10'"
+                        class="tw-px-4 tw-py-2 tw-rounded-xl tw-min-w-[44px] tw-transition-all"
                     >
                         {{ page }}
                     </button>
                     <span 
                         v-else-if="page === currentPage - 2 || page === currentPage + 2" 
-                        class="tw-px-1 tw-text-gray-400"
+                        class="tw-px-2 tw-text-white/40"
                     >...</span>
                 </template>
 
                 <button 
                     @click="changePage(currentPage + 1)" 
                     :disabled="currentPage === totalPages"
-                    class="tw-px-3 tw-py-2 tw-rounded-lg tw-bg-gray-200 disabled:tw-opacity-50 disabled:tw-cursor-not-allowed tw-text-sm"
+                    class="tw-px-4 tw-py-2 tw-rounded-xl tw-bg-white/5 tw-border tw-border-white/10 tw-text-white/60 disabled:tw-opacity-30 disabled:tw-cursor-not-allowed hover:tw-bg-white/10 tw-transition-all"
                 >
                     →
                 </button>
             </div>
 
-            <p v-if="totalPages > 1" class="tw-text-center tw-text-gray-400 tw-text-xs tw-mt-2">
+            <p v-if="totalPages > 1" class="tw-text-center tw-text-white/40 tw-text-sm tw-mt-3">
                 Страница {{ currentPage }} из {{ totalPages }}
             </p>
         </div>
     </div>
 </template>
+
+<style scoped>
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>

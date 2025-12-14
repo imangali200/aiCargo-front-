@@ -4,11 +4,11 @@
     <div class="tw-mb-6">
       <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
         <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/admin">Главная</router-link>
-        <span class="tw-text-white/30">→</span>
-        <span class="tw-text-white/50">История</span>
+        <span class="tw-text-white/60">→</span>
+        <span class="tw-text-white/60">История</span>
       </div>
       <h1 class="tw-text-2xl tw-font-bold tw-text-white tw-mb-2">История товаров</h1>
-      <p class="tw-text-white/50">Все товары и их статусы</p>
+      <p class="tw-text-white/60">Все товары и их статусы</p>
     </div>
 
     <!-- Filters -->
@@ -37,7 +37,7 @@
             type="text" 
             v-model="searchQuery"
             placeholder="Трек-код іздеу..."
-            class="tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-3 tw-py-2 tw-text-white tw-text-sm tw-outline-none focus:tw-border-cyan-500/50 placeholder:tw-text-white/30"
+            class="tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-3 tw-py-2 tw-text-white tw-text-sm tw-outline-none focus:tw-border-cyan-500/50 placeholder:tw-text-white/60"
           >
         </div>
       </div>
@@ -47,7 +47,7 @@
     <div class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-4 tw-gap-4 tw-mb-6">
       <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-white">{{ stats.total }}</p>
-        <p class="tw-text-white/50 tw-text-sm">Барлығы</p>
+        <p class="tw-text-white/60 tw-text-sm">Барлығы</p>
       </div>
       <div class="tw-bg-blue-500/10 tw-border tw-border-blue-500/20 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-blue-400">{{ stats.registered }}</p>
@@ -66,23 +66,23 @@
     <!-- Loading -->
     <div v-if="loading" class="tw-text-center tw-py-16">
       <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-      <p class="tw-mt-4 tw-text-white/50">Жүктелуде...</p>
+      <p class="tw-mt-4 tw-text-white/60">Жүктелуде...</p>
     </div>
 
     <!-- History List -->
     <div v-else class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-overflow-hidden">
       <div class="tw-px-5 tw-py-4 tw-border-b tw-border-white/10 tw-flex tw-items-center tw-justify-between">
         <h2 class="tw-text-lg tw-font-semibold tw-text-white">Товарлар тізімі</h2>
-        <span class="tw-text-white/50 tw-text-sm">{{ filteredProducts.length }} жазба</span>
+        <span class="tw-text-white/60 tw-text-sm">{{ filteredProducts.length }} жазба</span>
       </div>
       
       <!-- Table Header -->
       <div class="tw-hidden sm:tw-grid tw-grid-cols-12 tw-gap-4 tw-px-5 tw-py-3 tw-bg-white/[0.02] tw-border-b tw-border-white/10">
-        <span class="tw-col-span-3 tw-text-white/50 tw-text-sm tw-font-medium">Трек-код</span>
-        <span class="tw-col-span-3 tw-text-white/50 tw-text-sm tw-font-medium">Сипаттама</span>
-        <span class="tw-col-span-2 tw-text-white/50 tw-text-sm tw-font-medium">Статус</span>
-        <span class="tw-col-span-2 tw-text-white/50 tw-text-sm tw-font-medium">Тіркелген</span>
-        <span class="tw-col-span-2 tw-text-white/50 tw-text-sm tw-font-medium">Соңғы өзгеріс</span>
+        <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Трек-код</span>
+        <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Сипаттама</span>
+        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Статус</span>
+        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Тіркелген</span>
+        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Соңғы өзгеріс</span>
       </div>
 
       <!-- Table Body -->
@@ -95,13 +95,13 @@
           <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-12 tw-gap-2 sm:tw-gap-4 tw-items-center">
             <!-- Track Code -->
             <div class="tw-col-span-3">
-              <span class="tw-text-white/40 tw-text-xs sm:tw-hidden">Трек-код: </span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Трек-код: </span>
               <span class="tw-text-white tw-font-mono tw-font-medium">{{ item.productId }}</span>
             </div>
             
             <!-- Product Name -->
             <div class="tw-col-span-3">
-              <span class="tw-text-white/40 tw-text-xs sm:tw-hidden">Сипаттама: </span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Сипаттама: </span>
               <span class="tw-text-white/70">{{ item.productName || '—' }}</span>
             </div>
             
@@ -119,14 +119,14 @@
             
             <!-- Registered Date -->
             <div class="tw-col-span-2">
-              <span class="tw-text-white/40 tw-text-xs sm:tw-hidden">Тіркелген: </span>
-              <span class="tw-text-white/50 tw-text-sm">{{ formatDate(item.client_registered) }}</span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Тіркелген: </span>
+              <span class="tw-text-white/60 tw-text-sm">{{ formatDate(item.client_registered) }}</span>
             </div>
             
             <!-- Last Update -->
             <div class="tw-col-span-2">
-              <span class="tw-text-white/40 tw-text-xs sm:tw-hidden">Соңғы: </span>
-              <span class="tw-text-white/50 tw-text-sm">{{ formatDate(getLastUpdate(item)) }}</span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Соңғы: </span>
+              <span class="tw-text-white/60 tw-text-sm">{{ formatDate(getLastUpdate(item)) }}</span>
             </div>
           </div>
 
@@ -142,11 +142,11 @@
         <!-- Empty State -->
         <div v-if="filteredProducts.length === 0" class="tw-px-5 tw-py-16 tw-text-center">
           <div class="tw-w-16 tw-h-16 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mx-auto tw-mb-4">
-            <svg class="tw-w-8 tw-h-8 tw-text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="tw-w-8 tw-h-8 tw-text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
           </div>
-          <p class="tw-text-white/50">Товарлар табылмады</p>
+          <p class="tw-text-white/60">Товарлар табылмады</p>
         </div>
       </div>
     </div>

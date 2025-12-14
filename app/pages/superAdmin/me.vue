@@ -96,9 +96,6 @@ onMounted(() => {
                             <p>📱 {{ profile.phoneNumber }}</p>
                             <p>📍 {{ profile.branch }} • Код: {{ profile.code }}</p>
                             <p>📅 Зарегистрирован: {{ formatDate(profile.createAt) }}</p>
-                            <p :class="profile.isActive ? 'tw-text-emerald-400' : 'tw-text-red-400'">
-                                {{ profile.isActive ? '✅ Активен' : '❌ Неактивен' }}
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -110,7 +107,7 @@ onMounted(() => {
                     <span>🛠️</span> Панель управления
                 </h2>
                 
-                <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-3 tw-gap-4">
+                <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
                     <router-link to="/superAdmin/users" class="tw-bg-gradient-to-br tw-from-cyan-500 tw-to-cyan-600 tw-rounded-2xl tw-p-5 tw-text-white hover:tw-translate-y-[-4px] hover:tw-shadow-xl hover:tw-shadow-cyan-500/30 tw-transition-all tw-no-underline">
                         <div class="tw-text-3xl tw-mb-3">👥</div>
                         <h3 class="tw-font-bold tw-mb-1">Пользователи</h3>
@@ -127,6 +124,12 @@ onMounted(() => {
                         <div class="tw-text-3xl tw-mb-3">📦</div>
                         <h3 class="tw-font-bold tw-mb-1">Товары</h3>
                         <p class="tw-text-white/70 tw-text-sm">Управление товарами</p>
+                    </router-link>
+
+                    <router-link to="/superAdmin/import" class="tw-bg-gradient-to-br tw-from-violet-500 tw-to-purple-600 tw-rounded-2xl tw-p-5 tw-text-white hover:tw-translate-y-[-4px] hover:tw-shadow-xl hover:tw-shadow-violet-500/30 tw-transition-all tw-no-underline">
+                        <div class="tw-text-3xl tw-mb-3">📥</div>
+                        <h3 class="tw-font-bold tw-mb-1">Импорт</h3>
+                        <p class="tw-text-white/70 tw-text-sm">Қытай / Тараз импорт</p>
                     </router-link>
                 </div>
             </div>

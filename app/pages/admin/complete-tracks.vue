@@ -4,11 +4,11 @@
     <div class="tw-mb-6">
       <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
         <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/admin">Главная</router-link>
-        <span class="tw-text-white/30">→</span>
-        <span class="tw-text-white/50">Выдать товар</span>
+        <span class="tw-text-white/60">→</span>
+        <span class="tw-text-white/60">Выдать товар</span>
       </div>
       <h1 class="tw-text-2xl tw-font-bold tw-text-white tw-mb-2">Выдать товар клиенту</h1>
-      <p class="tw-text-white/50">Сканируйте штрих-код для завершения заказа</p>
+      <p class="tw-text-white/60">Сканируйте штрих-код для завершения заказа</p>
     </div>
 
     <!-- Warning -->
@@ -38,7 +38,7 @@
             @keyup.enter="handleScannerInput"
             type="text"
             placeholder="Сканируйте штрих-код..."
-            class="tw-flex-1 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-3 tw-text-white placeholder:tw-text-white/30 tw-outline-none focus:tw-border-emerald-500/50 tw-transition-colors"
+            class="tw-flex-1 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-3 tw-text-white placeholder:tw-text-white/60 tw-outline-none focus:tw-border-emerald-500/50 tw-transition-colors"
             autofocus
           >
         </div>
@@ -56,14 +56,14 @@
 
     <!-- Manual Input -->
     <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-5 tw-mb-6">
-      <p class="tw-text-white/50 tw-text-sm tw-mb-3">Или введите трек-код вручную</p>
+      <p class="tw-text-white/60 tw-text-sm tw-mb-3">Или введите трек-код вручную</p>
       <div class="tw-flex tw-items-center tw-gap-3">
         <input
           v-model="manualCode"
           @keyup.enter="addManualCode"
           type="text"
           placeholder="Введите трек-код"
-          class="tw-flex-1 sm:tw-max-w-xs tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-3 tw-text-white placeholder:tw-text-white/30 tw-outline-none focus:tw-border-cyan-500/50 tw-transition-colors"
+          class="tw-flex-1 sm:tw-max-w-xs tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-3 tw-text-white placeholder:tw-text-white/60 tw-outline-none focus:tw-border-cyan-500/50 tw-transition-colors"
         >
         <button 
           @click="addManualCode"
@@ -82,7 +82,7 @@
     <div class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-3 tw-gap-4 tw-mb-6" v-if="completedTracks.length > 0">
       <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-white">{{ completedTracks.length }}</p>
-        <p class="tw-text-white/50 tw-text-sm">Всего</p>
+        <p class="tw-text-white/60 tw-text-sm">Всего</p>
       </div>
       <div class="tw-bg-emerald-500/10 tw-border tw-border-emerald-500/20 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-emerald-400">{{ completedTracks.filter(t => t.success).length }}</p>
@@ -102,8 +102,8 @@
       
       <!-- Table Header -->
       <div class="tw-hidden sm:tw-grid tw-grid-cols-2 tw-gap-4 tw-px-5 tw-py-3 tw-bg-white/[0.02] tw-border-b tw-border-white/10">
-        <span class="tw-text-white/50 tw-text-sm tw-font-medium">Трек-код</span>
-        <span class="tw-text-white/50 tw-text-sm tw-font-medium">Статус</span>
+        <span class="tw-text-white/60 tw-text-sm tw-font-medium">Трек-код</span>
+        <span class="tw-text-white/60 tw-text-sm tw-font-medium">Статус</span>
       </div>
 
       <!-- Table Body -->
@@ -115,7 +115,7 @@
         >
           <div class="tw-flex tw-flex-col sm:tw-grid sm:tw-grid-cols-2 tw-gap-2 sm:tw-gap-4">
             <div>
-              <span class="tw-text-white/40 tw-text-xs sm:tw-hidden">Трек-код:</span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Трек-код:</span>
               <p class="tw-text-white tw-font-mono">{{ item.trackCode }}</p>
             </div>
             <div class="tw-flex tw-items-center tw-gap-2">
@@ -136,11 +136,11 @@
         <!-- Empty State -->
         <div v-if="completedTracks.length === 0" class="tw-px-5 tw-py-16 tw-text-center">
           <div class="tw-w-16 tw-h-16 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mx-auto tw-mb-4">
-            <svg class="tw-w-8 tw-h-8 tw-text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="tw-w-8 tw-h-8 tw-text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
           </div>
-          <p class="tw-text-white/50">Сканируйте или введите трек-код для начала</p>
+          <p class="tw-text-white/60">Сканируйте или введите трек-код для начала</p>
         </div>
       </div>
     </div>

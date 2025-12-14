@@ -5,7 +5,7 @@
             <p class="tw-text-white/60">Выберите раздел для управления</p>
         </div>
         
-        <div class="tw-flex tw-flex-col sm:tw-grid sm:tw-grid-cols-3 tw-gap-4">
+        <div class="tw-flex tw-flex-col sm:tw-grid sm:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
             <router-link to="/superAdmin/users" class="tw-flex tw-items-center tw-gap-4 tw-p-5 tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-no-underline tw-transition-all tw-duration-300 hover:tw-translate-y-[-4px] hover:tw-shadow-2xl hover:tw-border-cyan-500/50 hover:tw-bg-cyan-500/10 group">
                 <div class="tw-w-14 tw-h-14 tw-rounded-2xl tw-bg-gradient-to-br tw-from-cyan-500 tw-to-cyan-600 tw-flex tw-items-center tw-justify-center tw-text-white tw-flex-shrink-0">
                     <svg class="tw-w-7 tw-h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
@@ -39,6 +39,19 @@
                 <div class="tw-flex-1">
                     <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">Товары</h3>
                     <p class="tw-text-sm tw-text-white/50">Управление треками и посылками</p>
+                </div>
+                <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
+                    <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+            </router-link>
+
+            <router-link to="/superAdmin/import" class="tw-flex tw-items-center tw-gap-4 tw-p-5 tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-no-underline tw-transition-all tw-duration-300 hover:tw-translate-y-[-4px] hover:tw-shadow-2xl hover:tw-border-emerald-500/50 hover:tw-bg-emerald-500/10 group">
+                <div class="tw-w-14 tw-h-14 tw-rounded-2xl tw-bg-gradient-to-br tw-from-emerald-500 tw-to-green-500 tw-flex tw-items-center tw-justify-center tw-text-white tw-flex-shrink-0">
+                    <svg class="tw-w-7 tw-h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                </div>
+                <div class="tw-flex-1">
+                    <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">Импорт</h3>
+                    <p class="tw-text-sm tw-text-white/50">Қытай / Тараз статустарын импорттау</p>
                 </div>
                 <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

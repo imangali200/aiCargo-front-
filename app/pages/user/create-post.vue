@@ -85,7 +85,7 @@ function goBack() {
             <div class="tw-mb-4">
                 <label class="tw-block tw-text-sm tw-text-white/60 tw-mb-2">Ссылка на товар *</label>
                 <div class="tw-flex tw-items-center tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl focus-within:tw-border-cyan-500 focus-within:tw-shadow-lg focus-within:tw-shadow-cyan-500/10 tw-transition-all">
-                    <div class="tw-px-4 tw-text-white/40">
+                    <div class="tw-px-4 tw-text-white/60">
                         <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                         </svg>
@@ -94,7 +94,7 @@ function goBack() {
                         v-model="link"
                         type="text"
                         placeholder="https://example.com/product"
-                        class="tw-flex-1 tw-h-[50px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/30 tw-pr-4"
+                        class="tw-flex-1 tw-h-[50px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50 tw-pr-4"
                     >
                 </div>
             </div>
@@ -108,10 +108,10 @@ function goBack() {
                         placeholder="Расскажите о товаре, качестве, доставке..."
                         rows="5"
                         maxlength="500"
-                        class="tw-w-full tw-p-4 tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/30 tw-resize-none"
+                        class="tw-w-full tw-p-4 tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50 tw-resize-none"
                     ></textarea>
                 </div>
-                <p class="tw-text-right tw-text-xs tw-text-white/40 tw-mt-2">{{ review.length }} / 500</p>
+                <p class="tw-text-right tw-text-xs tw-text-white/60 tw-mt-2">{{ review.length }} / 500</p>
             </div>
 
             <!-- Submit Button -->

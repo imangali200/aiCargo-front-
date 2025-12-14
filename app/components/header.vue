@@ -8,7 +8,7 @@
                 </div>
                 <div class="tw-hidden sm:tw-block">
                     <h1 class="tw-text-white tw-font-bold tw-text-lg tw-leading-tight tw-m-0">AI-CARGO</h1>
-                    <p class="tw-text-white/50 tw-text-xs tw-m-0">Карго сервис</p>
+                    <p class="tw-text-white/60 tw-text-xs tw-m-0">Карго сервис</p>
                 </div>
             </router-link>
             <div class="tw-flex tw-items-center tw-gap-4">

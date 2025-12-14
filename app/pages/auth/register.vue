@@ -293,7 +293,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 .auth-container {
   min-height: 100vh;
@@ -302,7 +302,7 @@ onMounted(() => {
   justify-content: center;
   padding: 2rem;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   position: relative;
   overflow: hidden;
 }
@@ -433,7 +433,7 @@ onMounted(() => {
 
 .subtitle {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 400;
 }
 
@@ -495,9 +495,9 @@ onMounted(() => {
   position: absolute;
   top: -9px;
   left: 12px;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   background: linear-gradient(180deg, #1e293b 0%, rgba(30, 41, 59, 0.8) 100%);
   padding: 0 6px;
   border-radius: 4px;
@@ -524,7 +524,7 @@ onMounted(() => {
   border: none;
   outline: none;
   font-size: 0.95rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #ffffff;
   padding-right: 1rem;
 }
@@ -553,7 +553,7 @@ onMounted(() => {
 
 .input-wrapper input::placeholder,
 .input-wrapper select::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .toggle-password {
@@ -593,7 +593,7 @@ onMounted(() => {
   border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #ffffff;
   cursor: pointer;
   margin-top: 0.5rem;

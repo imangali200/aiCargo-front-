@@ -4,11 +4,11 @@
     <div class="tw-mb-6">
       <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
         <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/admin">Главная</router-link>
-        <span class="tw-text-white/30">→</span>
-        <span class="tw-text-white/50">Импорт</span>
+        <span class="tw-text-white/60">→</span>
+        <span class="tw-text-white/60">Импорт</span>
       </div>
       <h1 class="tw-text-2xl tw-font-bold tw-text-white tw-mb-2">Импорт трек-кодов</h1>
-      <p class="tw-text-white/50">Загрузите файл с трек-кодами для массового добавления</p>
+      <p class="tw-text-white/60">Загрузите файл с трек-кодами для массового добавления</p>
     </div>
 
     <!-- Upload Card -->
@@ -21,7 +21,7 @@
         </div>
         <div>
           <h2 class="tw-text-lg tw-font-semibold tw-text-white">Загрузка файла</h2>
-          <p class="tw-text-white/50 tw-text-sm">Выберите файл .xlsx или .txt</p>
+          <p class="tw-text-white/60 tw-text-sm">Выберите файл .xlsx или .txt</p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
               </svg>
               Файл таңдау
             </button>
-            <span class="tw-text-white/50 tw-text-sm tw-truncate">
+            <span class="tw-text-white/60 tw-text-sm tw-truncate">
               {{ selectedFile ? selectedFile.name : 'Файл таңдалмаған' }}
             </span>
           </div>

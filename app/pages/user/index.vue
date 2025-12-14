@@ -250,10 +250,10 @@ onMounted(() => {
         <!-- Search -->
         <div class="tw-mt-5">
             <div class="tw-flex tw-items-center tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-overflow-hidden focus-within:tw-border-cyan-500 focus-within:tw-shadow-lg focus-within:tw-shadow-cyan-500/10 tw-transition-all tw-duration-300" :class="{ 'tw-border-cyan-500': isSearchMode }">
-                <div class="tw-px-4 tw-text-white/40">
+                <div class="tw-px-4 tw-text-white/60">
                     <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
-                <input v-model="searchQuery" @keyup.enter="searchTrack" type="text" placeholder="Поиск по трек-коду..." class="tw-flex-1 tw-min-w-0 tw-h-[52px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/30">
+                <input v-model="searchQuery" @keyup.enter="searchTrack" type="text" placeholder="Поиск по трек-коду..." class="tw-flex-1 tw-min-w-0 tw-h-[52px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50">
                 <div class="tw-flex tw-items-center tw-gap-1.5 tw-pr-1.5 tw-flex-shrink-0">
                     <button @click="searchTrack" class="tw-h-10 tw-px-5 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-lg tw-text-white tw-font-semibold tw-text-sm hover:tw-from-cyan-600 hover:tw-to-cyan-700 tw-transition-all tw-flex-shrink-0">Поиск</button>
                     <button v-if="isSearchMode" @click="clearSearch" class="tw-w-10 tw-h-10 tw-bg-red-500/20 tw-rounded-lg tw-text-red-400 tw-flex tw-items-center tw-justify-center hover:tw-bg-red-500/30 tw-transition-all tw-flex-shrink-0">
@@ -268,7 +268,7 @@ onMounted(() => {
             <span>🔍</span>
             <span>Результат поиска:</span>
             <span class="tw-font-semibold tw-text-cyan-400">"{{ searchQuery }}"</span>
-            <span class="tw-text-white/40">({{ products.length }} найдено)</span>
+            <span class="tw-text-white/60">({{ products.length }} найдено)</span>
         </div>
 
         <!-- Loading -->
@@ -281,7 +281,7 @@ onMounted(() => {
         <div v-else-if="!products.length" class="tw-mt-6 tw-text-center tw-py-12 tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl">
             <div class="tw-text-5xl tw-mb-4">📦</div>
             <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-2">У вас нет треков</h3>
-            <p class="tw-text-white/40 tw-mb-4">Добавьте свой первый трек-код</p>
+            <p class="tw-text-white/60 tw-mb-4">Добавьте свой первый трек-код</p>
             <button @click="showAddModal = true" class="tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-text-white tw-px-6 tw-py-3 tw-rounded-xl tw-font-semibold hover:tw-from-cyan-600 hover:tw-to-cyan-700 tw-transition-all tw-shadow-lg tw-shadow-cyan-500/30">
                 Добавить трек
             </button>
@@ -295,7 +295,7 @@ onMounted(() => {
                     <div :class="['tw-bg-gradient-to-r tw-px-4 tw-py-3', getStatusGradient(product)]">
                         <div class="tw-flex tw-items-center tw-justify-between tw-mb-3">
                             <div>
-                                <p class="tw-text-white/70 tw-text-[10px] tw-font-medium">Трек-код</p>
+                                <p class="tw-text-white/70 tw-text-xs tw-font-medium">Трек-код</p>
                                 <p class="tw-text-white tw-font-bold tw-text-sm tw-tracking-wide">{{ product.productId.toUpperCase() }}</p>
                             </div>
                             <button @click="deleteTrack(product.productId)" class="tw-w-8 tw-h-8 tw-bg-white/20 hover:tw-bg-red-500 tw-text-white tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-transition-all tw-duration-200">
@@ -311,7 +311,7 @@ onMounted(() => {
                     <!-- Content -->
                     <div class="tw-p-3">
                         <div class="tw-bg-white/5 tw-rounded-xl tw-p-2.5 tw-mb-3">
-                            <p class="tw-text-[10px] tw-text-white/40">Описание</p>
+                            <p class="tw-text-xs tw-text-white/60">Описание</p>
                             <p class="tw-text-white tw-font-medium tw-text-xs tw-line-clamp-2">{{ product.description || 'Не указано' }}</p>
                         </div>
 
@@ -323,44 +323,44 @@ onMounted(() => {
                                 <div class="tw-flex tw-items-center tw-gap-2.5 tw-relative">
                                     <div :class="['tw-w-6 tw-h-6 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-flex-shrink-0 tw-z-10', product.client_registered ? 'tw-bg-gradient-to-br tw-from-orange-400 tw-to-orange-600 tw-shadow-md tw-shadow-orange-500/30' : 'tw-bg-white/10']">
                                         <svg v-if="product.client_registered" class="tw-w-3 tw-h-3 tw-text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                        <span v-else class="tw-text-white/40 tw-text-[10px] tw-font-bold">1</span>
+                                        <span v-else class="tw-text-white/60 tw-text-xs tw-font-bold">1</span>
                                     </div>
                                     <div class="tw-flex-1 tw-flex tw-items-center tw-justify-between">
-                                        <p :class="['tw-font-medium tw-text-xs', product.client_registered ? 'tw-text-white/90' : 'tw-text-white/40']">Регистрация</p>
-                                        <p :class="['tw-text-[10px]', product.client_registered ? 'tw-text-orange-400' : 'tw-text-white/30']">{{ formatDateTime(product.client_registered) || '—' }}</p>
+                                        <p :class="['tw-font-medium tw-text-xs', product.client_registered ? 'tw-text-white/90' : 'tw-text-white/60']">Регистрация</p>
+                                        <p :class="['tw-text-xs', product.client_registered ? 'tw-text-orange-400' : 'tw-text-white/50']">{{ formatDateTime(product.client_registered) || '—' }}</p>
                                     </div>
                                 </div>
                                 <!-- Step 2: China -->
                                 <div class="tw-flex tw-items-center tw-gap-2.5 tw-relative">
                                     <div :class="['tw-w-6 tw-h-6 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-flex-shrink-0 tw-z-10', product.china_warehouse ? 'tw-bg-gradient-to-br tw-from-blue-400 tw-to-blue-600 tw-shadow-md tw-shadow-blue-500/30' : 'tw-bg-white/10']">
                                         <svg v-if="product.china_warehouse" class="tw-w-3 tw-h-3 tw-text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                        <span v-else class="tw-text-white/40 tw-text-[10px] tw-font-bold">2</span>
+                                        <span v-else class="tw-text-white/60 tw-text-xs tw-font-bold">2</span>
                                     </div>
                                     <div class="tw-flex-1 tw-flex tw-items-center tw-justify-between">
-                                        <p :class="['tw-font-medium tw-text-xs', product.china_warehouse ? 'tw-text-white/90' : 'tw-text-white/40']">Китай</p>
-                                        <p :class="['tw-text-[10px]', product.china_warehouse ? 'tw-text-blue-400' : 'tw-text-white/30']">{{ formatDateTime(product.china_warehouse) || '—' }}</p>
+                                        <p :class="['tw-font-medium tw-text-xs', product.china_warehouse ? 'tw-text-white/90' : 'tw-text-white/60']">Китай</p>
+                                        <p :class="['tw-text-xs', product.china_warehouse ? 'tw-text-blue-400' : 'tw-text-white/50']">{{ formatDateTime(product.china_warehouse) || '—' }}</p>
                                     </div>
                                 </div>
                                 <!-- Step 3: Taraz -->
                                 <div class="tw-flex tw-items-center tw-gap-2.5 tw-relative">
                                     <div :class="['tw-w-6 tw-h-6 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-flex-shrink-0 tw-z-10', product.aicargo ? 'tw-bg-gradient-to-br tw-from-violet-400 tw-to-violet-600 tw-shadow-md tw-shadow-violet-500/30' : 'tw-bg-white/10']">
                                         <svg v-if="product.aicargo" class="tw-w-3 tw-h-3 tw-text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                        <span v-else class="tw-text-white/40 tw-text-[10px] tw-font-bold">3</span>
+                                        <span v-else class="tw-text-white/60 tw-text-xs tw-font-bold">3</span>
                                     </div>
                                     <div class="tw-flex-1 tw-flex tw-items-center tw-justify-between">
-                                        <p :class="['tw-font-medium tw-text-xs', product.aicargo ? 'tw-text-white/90' : 'tw-text-white/40']">Тараз</p>
-                                        <p :class="['tw-text-[10px]', product.aicargo ? 'tw-text-violet-400' : 'tw-text-white/30']">{{ formatDateTime(product.aicargo) || '—' }}</p>
+                                        <p :class="['tw-font-medium tw-text-xs', product.aicargo ? 'tw-text-white/90' : 'tw-text-white/60']">Тараз</p>
+                                        <p :class="['tw-text-xs', product.aicargo ? 'tw-text-violet-400' : 'tw-text-white/50']">{{ formatDateTime(product.aicargo) || '—' }}</p>
                                     </div>
                                 </div>
                                 <!-- Step 4: Delivered -->
                                 <div class="tw-flex tw-items-center tw-gap-2.5 tw-relative">
                                     <div :class="['tw-w-6 tw-h-6 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-flex-shrink-0 tw-z-10', product.given_to_client ? 'tw-bg-gradient-to-br tw-from-green-400 tw-to-green-600 tw-shadow-md tw-shadow-green-500/30' : 'tw-bg-white/10']">
                                         <svg v-if="product.given_to_client" class="tw-w-3 tw-h-3 tw-text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                        <span v-else class="tw-text-white/40 tw-text-[10px] tw-font-bold">4</span>
+                                        <span v-else class="tw-text-white/60 tw-text-xs tw-font-bold">4</span>
                                     </div>
                                     <div class="tw-flex-1 tw-flex tw-items-center tw-justify-between">
-                                        <p :class="['tw-font-medium tw-text-xs', product.given_to_client ? 'tw-text-white/90' : 'tw-text-white/40']">Выдан</p>
-                                        <p :class="['tw-text-[10px]', product.given_to_client ? 'tw-text-green-400' : 'tw-text-white/30']">{{ formatDateTime(product.given_to_client) || '—' }}</p>
+                                        <p :class="['tw-font-medium tw-text-xs', product.given_to_client ? 'tw-text-white/90' : 'tw-text-white/60']">Выдан</p>
+                                        <p :class="['tw-text-xs', product.given_to_client ? 'tw-text-green-400' : 'tw-text-white/50']">{{ formatDateTime(product.given_to_client) || '—' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -407,17 +407,17 @@ onMounted(() => {
                         <div>
                             <label class="tw-block tw-text-sm tw-text-white/60 tw-mb-2">Трек-код *</label>
                             <div class="tw-flex tw-items-center tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl focus-within:tw-border-cyan-500 focus-within:tw-shadow-lg focus-within:tw-shadow-cyan-500/10 tw-transition-all">
-                                <div class="tw-px-4 tw-text-white/40">
+                                <div class="tw-px-4 tw-text-white/60">
                                     <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
                                 </div>
-                                <input v-model="newTrackCode" type="text" placeholder="Введите трек-код" class="tw-flex-1 tw-h-[50px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/30 tw-pr-4" autofocus>
+                                <input v-model="newTrackCode" type="text" placeholder="Введите трек-код" class="tw-flex-1 tw-h-[50px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50 tw-pr-4" autofocus>
                             </div>
                         </div>
 
                         <div>
                             <label class="tw-block tw-text-sm tw-text-white/60 tw-mb-2">Описание товара *</label>
                             <div class="tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl focus-within:tw-border-cyan-500 focus-within:tw-shadow-lg focus-within:tw-shadow-cyan-500/10 tw-transition-all">
-                                <textarea v-model="newDescription" @keyup.ctrl.enter="addTrack" placeholder="Например: Куртка зимняя, размер L" rows="3" class="tw-w-full tw-p-4 tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/30 tw-resize-none"></textarea>
+                                <textarea v-model="newDescription" @keyup.ctrl.enter="addTrack" placeholder="Например: Куртка зимняя, размер L" rows="3" class="tw-w-full tw-p-4 tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50 tw-resize-none"></textarea>
                             </div>
                         </div>
                     </div>
@@ -441,7 +441,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 .animate-slideUp {
     animation: slideUp 0.6s ease-out;

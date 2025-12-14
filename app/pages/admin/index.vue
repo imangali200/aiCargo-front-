@@ -15,7 +15,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="tw-text-white/50 tw-text-sm">Вы являетесь администратором склада</p>
+                    <p class="tw-text-white/60 tw-text-sm">Вы являетесь администратором склада</p>
                     <p class="tw-text-white tw-text-xl tw-font-semibold" v-if="profileData && profileData.branch">{{ profileData.branch }}</p>
                     <div v-else class="tw-h-6 tw-w-32 tw-bg-white/10 tw-rounded tw-animate-pulse"></div>
                 </div>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="tw-flex-1">
                     <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">Принять товары</h3>
-                    <p class="tw-text-sm tw-text-white/50">Accept goods</p>
+                    <p class="tw-text-sm tw-text-white/60">Accept goods</p>
                 </div>
                 <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="tw-flex-1">
                     <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">История</h3>
-                    <p class="tw-text-sm tw-text-white/50">History</p>
+                    <p class="tw-text-sm tw-text-white/60">History</p>
                 </div>
                 <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="tw-flex-1">
                     <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">Импорт</h3>
-                    <p class="tw-text-sm tw-text-white/50">Import data</p>
+                    <p class="tw-text-sm tw-text-white/60">Import data</p>
                 </div>
                 <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -81,7 +81,7 @@
                 </div>
                 <div class="tw-flex-1">
                     <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">Выдать товар</h3>
-                    <p class="tw-text-sm tw-text-white/50">Complete order</p>
+                    <p class="tw-text-sm tw-text-white/60">Complete order</p>
                 </div>
                 <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

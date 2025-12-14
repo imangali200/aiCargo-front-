@@ -86,7 +86,7 @@ onMounted(() => {
         <!-- Loading -->
         <div v-if="loading" class="tw-text-center tw-py-16">
             <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-            <p class="tw-mt-4 tw-text-white/50">Загрузка...</p>
+            <p class="tw-mt-4 tw-text-white/60">Загрузка...</p>
         </div>
 
         <div v-else-if="profile">
@@ -115,15 +115,15 @@ onMounted(() => {
                         <div class="tw-flex tw-gap-5 tw-mb-4 tw-flex-wrap">
                             <div class="tw-flex tw-items-center tw-gap-1.5">
                                 <span class="tw-font-bold tw-text-white">{{ posts.length }}</span>
-                                <span class="tw-text-white/50 tw-text-sm">Постов</span>
+                                <span class="tw-text-white/60 tw-text-sm">Постов</span>
                             </div>
                             <div class="tw-flex tw-items-center tw-gap-1.5">
                                 <span class="tw-font-bold tw-text-white">{{ likedPosts.length }}</span>
-                                <span class="tw-text-white/50 tw-text-sm">Лайков</span>
+                                <span class="tw-text-white/60 tw-text-sm">Лайков</span>
                             </div>
                             <div class="tw-flex tw-items-center tw-gap-1.5">
                                 <span class="tw-font-bold tw-text-white">{{ savedProducts.length }}</span>
-                                <span class="tw-text-white/50 tw-text-sm">Сохранённых</span>
+                                <span class="tw-text-white/60 tw-text-sm">Сохранённых</span>
                             </div>
                         </div>
 
@@ -142,21 +142,21 @@ onMounted(() => {
                     <button 
                         @click="activeTab = 'posts'"
                         class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
-                        :class="activeTab === 'posts' ? 'tw-border-cyan-500 tw-text-cyan-400' : 'tw-border-transparent tw-text-white/50 hover:tw-text-white/70'"
+                        :class="activeTab === 'posts' ? 'tw-border-cyan-500 tw-text-cyan-400' : 'tw-border-transparent tw-text-white/60 hover:tw-text-white/70'"
                     >
                         <span class="tw-text-lg">📝</span> Посты
                     </button>
                     <button 
                         @click="activeTab = 'likes'"
                         class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
-                        :class="activeTab === 'likes' ? 'tw-border-pink-500 tw-text-pink-400' : 'tw-border-transparent tw-text-white/50 hover:tw-text-white/70'"
+                        :class="activeTab === 'likes' ? 'tw-border-pink-500 tw-text-pink-400' : 'tw-border-transparent tw-text-white/60 hover:tw-text-white/70'"
                     >
                         <span class="tw-text-lg">❤️</span> Лайки
                     </button>
                     <button 
                         @click="activeTab = 'saved'"
                         class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
-                        :class="activeTab === 'saved' ? 'tw-border-violet-500 tw-text-violet-400' : 'tw-border-transparent tw-text-white/50 hover:tw-text-white/70'"
+                        :class="activeTab === 'saved' ? 'tw-border-violet-500 tw-text-violet-400' : 'tw-border-transparent tw-text-white/60 hover:tw-text-white/70'"
                     >
                         <span class="tw-text-lg">🔖</span> Сохранённые
                     </button>
@@ -171,7 +171,7 @@ onMounted(() => {
                                 <span class="tw-text-4xl">📝</span>
                             </div>
                             <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Создайте свой первый пост</h3>
-                            <p class="tw-text-white/50 tw-text-sm">Здесь появятся ваши посты</p>
+                            <p class="tw-text-white/60 tw-text-sm">Здесь появятся ваши посты</p>
                         </div>
                         
                         <div v-else class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-4 tw-p-4">
@@ -185,17 +185,17 @@ onMounted(() => {
                                 </div>
                                 <div class="tw-p-4">
                                     <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/40 tw-mb-1">Ссылка:</p>
+                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Ссылка:</p>
                                         <a :href="post.link" target="_blank" class="tw-text-cyan-400 tw-text-sm tw-underline tw-break-all tw-line-clamp-2">{{ post.link }}</a>
                                     </div>
                                     <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/40 tw-mb-1">Отзыв:</p>
+                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Отзыв:</p>
                                         <p class="tw-text-white/80 tw-text-sm tw-line-clamp-3">{{ post.review }}</p>
                                     </div>
                                     <div class="tw-flex tw-items-center tw-gap-2 tw-pt-3 tw-border-t tw-border-white/10">
                                         <span>❤️</span>
                                         <span class="tw-font-bold tw-text-white">{{ post.likesCount }}</span>
-                                        <span class="tw-text-white/40 tw-text-sm">лайков</span>
+                                        <span class="tw-text-white/60 tw-text-sm">лайков</span>
                                     </div>
                                 </div>
                             </div>
@@ -209,7 +209,7 @@ onMounted(() => {
                                 <span class="tw-text-4xl">❤️</span>
                             </div>
                             <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Нет лайкнутых постов</h3>
-                            <p class="tw-text-white/50 tw-text-sm">Здесь появятся посты которые вы лайкнули</p>
+                            <p class="tw-text-white/60 tw-text-sm">Здесь появятся посты которые вы лайкнули</p>
                         </div>
                         
                         <div v-else class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-4 tw-p-4">
@@ -223,17 +223,17 @@ onMounted(() => {
                                 </div>
                                 <div class="tw-p-4">
                                     <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/40 tw-mb-1">Ссылка:</p>
+                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Ссылка:</p>
                                         <a :href="post.link" target="_blank" class="tw-text-pink-400 tw-text-sm tw-underline tw-break-all tw-line-clamp-2">{{ post.link }}</a>
                                     </div>
                                     <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/40 tw-mb-1">Отзыв:</p>
+                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Отзыв:</p>
                                         <p class="tw-text-white/80 tw-text-sm tw-line-clamp-3">{{ post.review }}</p>
                                     </div>
                                     <div class="tw-flex tw-items-center tw-gap-2 tw-pt-3 tw-border-t tw-border-white/10">
                                         <span>❤️</span>
                                         <span class="tw-font-bold tw-text-white">{{ post.likesCount }}</span>
-                                        <span class="tw-text-white/40 tw-text-sm">лайков</span>
+                                        <span class="tw-text-white/60 tw-text-sm">лайков</span>
                                     </div>
                                 </div>
                             </div>
@@ -247,14 +247,14 @@ onMounted(() => {
                                 <span class="tw-text-4xl">🔖</span>
                             </div>
                             <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Нет сохранённых товаров</h3>
-                            <p class="tw-text-white/50 tw-text-sm">Сохранённые товары появятся здесь</p>
+                            <p class="tw-text-white/60 tw-text-sm">Сохранённые товары появятся здесь</p>
                         </div>
                         
                         <div v-else class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-3 lg:tw-grid-cols-4 tw-gap-3 tw-p-4">
                             <div v-for="product in savedProducts" :key="product.id" class="tw-bg-gradient-to-br tw-from-violet-500/10 tw-to-violet-500/20 tw-border tw-border-violet-500/20 tw-rounded-xl tw-p-4 tw-text-center hover:tw-border-violet-500/40 tw-transition-all tw-cursor-pointer">
                                 <span class="tw-text-3xl tw-mb-2 tw-block">📦</span>
                                 <p class="tw-font-bold tw-text-white tw-text-sm">{{ product.productId }}</p>
-                                <p class="tw-text-white/50 tw-text-xs tw-line-clamp-2 tw-mt-1">{{ product.description || '' }}</p>
+                                <p class="tw-text-white/60 tw-text-xs tw-line-clamp-2 tw-mt-1">{{ product.description || '' }}</p>
                             </div>
                         </div>
                     </div>
@@ -265,7 +265,7 @@ onMounted(() => {
         <!-- Error State -->
         <div v-else class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-20">
             <div class="tw-text-5xl tw-mb-4">😕</div>
-            <p class="tw-text-white/50 tw-mb-4">Профиль не найден</p>
+            <p class="tw-text-white/60 tw-mb-4">Профиль не найден</p>
             <button @click="goBack" class="tw-px-6 tw-py-3 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-font-semibold hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all">
                 ← Назад
             </button>

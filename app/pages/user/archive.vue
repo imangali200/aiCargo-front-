@@ -94,14 +94,14 @@ onMounted(() => {
         <!-- Loading -->
         <div v-if="loading" class="tw-text-center tw-py-12">
             <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-violet-500/20 tw-border-t-violet-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-            <p class="tw-mt-4 tw-text-white/50">Загрузка...</p>
+            <p class="tw-mt-4 tw-text-white/60">Загрузка...</p>
         </div>
 
         <!-- Empty state -->
         <div v-else-if="!products.length" class="tw-text-center tw-py-16 tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl">
             <div class="tw-text-5xl tw-mb-4">🗑️</div>
             <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-2">Архив пуст</h3>
-            <p class="tw-text-white/40 tw-mb-4">Удалённые треки появятся здесь</p>
+            <p class="tw-text-white/60 tw-mb-4">Удалённые треки появятся здесь</p>
             <router-link to="/user" class="tw-inline-flex tw-items-center tw-gap-2 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-text-white tw-px-6 tw-py-3 tw-rounded-xl tw-font-semibold hover:tw-from-cyan-600 hover:tw-to-cyan-700 tw-transition-all">
                 <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 На главную
@@ -115,14 +115,14 @@ onMounted(() => {
                 <div v-for="product in paginatedProducts" :key="product.id" class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-xl tw-p-4 hover:tw-border-violet-500/30 tw-transition-all">
                     <div class="tw-flex tw-items-start tw-justify-between tw-mb-3">
                         <div>
-                            <p class="tw-text-xs tw-text-white/40">Трек-код</p>
+                            <p class="tw-text-xs tw-text-white/60">Трек-код</p>
                             <p class="tw-font-mono tw-font-bold tw-text-white">{{ product.productId.toUpperCase() }}</p>
                         </div>
                         <span class="tw-px-3 tw-py-1 tw-bg-white/10 tw-rounded-full tw-text-xs tw-text-white/60">В архиве</span>
                     </div>
                     <p v-if="product.description" class="tw-text-sm tw-text-white/70 tw-mb-3 tw-line-clamp-2">{{ product.description }}</p>
                     <div class="tw-flex tw-items-center tw-justify-between tw-pt-3 tw-border-t tw-border-white/10">
-                        <span class="tw-text-sm tw-text-white/40">{{ formatDate(product.client_registered) }}</span>
+                        <span class="tw-text-sm tw-text-white/60">{{ formatDate(product.client_registered) }}</span>
                         <button @click="restoreProduct(product.productId)" class="tw-flex tw-items-center tw-gap-2 tw-px-4 tw-py-2 tw-bg-emerald-500/20 tw-rounded-lg tw-text-emerald-400 tw-text-sm tw-font-semibold hover:tw-bg-emerald-500/30 tw-transition-all">
                             <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             Восстановить
@@ -146,7 +146,7 @@ onMounted(() => {
                         <tr v-for="product in paginatedProducts" :key="product.id" class="tw-border-t tw-border-white/5 hover:tw-bg-white/[0.02] tw-transition-all">
                             <td class="tw-px-5 tw-py-4"><span class="tw-font-mono tw-font-semibold tw-text-white">{{ product.productId.toUpperCase() }}</span></td>
                             <td class="tw-px-5 tw-py-4 tw-text-white/70 tw-max-w-[200px] tw-truncate">{{ product.description || '—' }}</td>
-                            <td class="tw-px-5 tw-py-4 tw-text-white/50">{{ formatDate(product.client_registered) }}</td>
+                            <td class="tw-px-5 tw-py-4 tw-text-white/60">{{ formatDate(product.client_registered) }}</td>
                             <td class="tw-px-5 tw-py-4 tw-text-center">
                                 <button @click="restoreProduct(product.productId)" class="tw-inline-flex tw-items-center tw-gap-2 tw-px-4 tw-py-2 tw-bg-emerald-500/20 tw-rounded-lg tw-text-emerald-400 tw-text-sm tw-font-semibold hover:tw-bg-emerald-500/30 tw-transition-all">
                                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>

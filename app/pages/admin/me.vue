@@ -61,7 +61,7 @@ onMounted(() => {
         <!-- Loading -->
         <div v-if="loading" class="tw-text-center tw-py-16">
             <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-amber-500/20 tw-border-t-amber-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-            <p class="tw-mt-4 tw-text-white/50">Загрузка...</p>
+            <p class="tw-mt-4 tw-text-white/60">Загрузка...</p>
         </div>
 
         <div v-else-if="profile">
@@ -96,9 +96,6 @@ onMounted(() => {
                             <p>📱 {{ profile.phoneNumber }}</p>
                             <p>📍 {{ profile.branch }} • Код: {{ profile.code }}</p>
                             <p>📅 Зарегистрирован: {{ formatDate(profile.createAt) }}</p>
-                            <p :class="profile.isActive ? 'tw-text-emerald-400' : 'tw-text-red-400'">
-                                {{ profile.isActive ? '✅ Активен' : '❌ Неактивен' }}
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -137,7 +134,7 @@ onMounted(() => {
         <!-- Error State -->
         <div v-else class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-20">
             <div class="tw-text-5xl tw-mb-4">😕</div>
-            <p class="tw-text-white/50 tw-mb-4">Профиль не найден</p>
+            <p class="tw-text-white/60 tw-mb-4">Профиль не найден</p>
             <button @click="goBack" class="tw-px-6 tw-py-3 tw-bg-gradient-to-r tw-from-amber-500 tw-to-orange-500 tw-rounded-xl tw-text-white tw-font-semibold hover:tw-shadow-lg hover:tw-shadow-amber-500/30 tw-transition-all">
                 ← Назад
             </button>
