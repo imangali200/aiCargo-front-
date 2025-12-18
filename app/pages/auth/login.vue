@@ -1,25 +1,22 @@
 <template>
     <div class="auth-page">
-        <!-- Back button -->
         <button @click="$router.push('/user')" class="back-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
         </button>
 
         <div class="auth-content">
-            <!-- Header -->
             <div class="auth-header">
                 <h1 class="auth-title">AI Market</h1>
-                <p class="auth-subtitle">Қосылыңыз және өз тауарларыңызды бақылаңыз, жаңалықтармен бөлісіңіз.</p>
+                <p class="auth-subtitle">Присоединяйтесь и отслеживайте свои товары, делитесь новостями.</p>
             </div>
 
-            <!-- Form -->
             <form @submit.prevent="postLogin" class="auth-form">
                 <div class="input-group">
                     <input 
                         v-model="phoneValue" 
                         ref="phoneInput" 
                         type="text" 
-                        placeholder="Телефон номері"
+                        placeholder="Номер телефона"
                         class="auth-input"
                         :class="{ error: errorPhoneNumber }"
                     />
@@ -29,7 +26,7 @@
                     <input 
                         v-model="passwordValue" 
                         :type="showPassword ? 'text' : 'password'" 
-                        placeholder="Құпия сөз"
+                        placeholder="Пароль"
                         class="auth-input"
                         :class="{ error: errorMessage && !errorPhoneNumber }"
                     />
@@ -38,19 +35,17 @@
                 <p v-if="errorMessage || errorPhoneNumber" class="error-text">{{ errorPhoneNumber || errorMessage }}</p>
 
                 <button type="submit" class="auth-submit" :disabled="isLoading">
-                    {{ isLoading ? '...' : 'Кіру' }}
+                    {{ isLoading ? '...' : 'Войти' }}
                 </button>
 
             </form>
 
-            <!-- Divider -->
             <div class="auth-divider">
-                <span>немесе</span>
+                <span>или</span>
             </div>
 
-            <!-- Register Link -->
             <RouterLink to="/auth/register" class="register-btn">
-                Тіркелу
+                Регистрация
             </RouterLink>
         </div>
     </div>
@@ -62,6 +57,13 @@ import IMask from "imask";
 definePageMeta({
     layout: "auth",
 });
+
+export interface myJwtPayload {
+    role: string;
+    sub: number;
+    iat: number;
+    exp: number;
+}
 
 const { $axios } = useNuxtApp();
 
@@ -75,7 +77,7 @@ const isLoading = ref<boolean>(false);
 
 async function postLogin() {
     if (!phoneValue.value || !passwordValue.value) {
-        errorMessage.value = "Барлық өрістерді толтырыңыз";
+        errorMessage.value = "Заполните все поля";
         return;
     }
     
@@ -95,13 +97,13 @@ async function postLogin() {
             return navigateTo("/");
         } else {
             if (res.data.response?.statusCode === 404) {
-                errorPhoneNumber.value = "Қате номер";
+                errorPhoneNumber.value = "Неверный номер";
             } else if (res.data.response?.statusCode === 400) {
-                errorMessage.value = "Қате құпия сөз";
+                errorMessage.value = "Неверный пароль";
             }
         }
     } catch (err: any) {
-        errorMessage.value = "Кіру кезінде қате орын алды";
+        errorMessage.value = "Ошибка при входе";
     } finally {
         isLoading.value = false;
     }
@@ -142,9 +144,6 @@ onMounted(() => {
 .auth-submit { height: 56px; background: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; color: #000; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
 .auth-submit:hover { background: #e5e5e5; }
 .auth-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.forgot-btn { background: transparent; border: none; color: #666; font-size: 14px; cursor: pointer; padding: 16px 0; }
-.forgot-btn:hover { color: #fff; }
 
 .auth-divider { display: flex; align-items: center; gap: 16px; margin: 24px 0; }
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #333; }

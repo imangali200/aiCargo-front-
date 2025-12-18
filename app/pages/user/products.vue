@@ -60,13 +60,13 @@ async function addTrack() {
             { productId: newTrackCode.value.trim(), productName: newDescription.value.trim() },
             { headers: { 'Authorization': `Bearer ${token.value}` } }
         )
-        toast.success('Трек қосылды!', { position: 'top-center' })
+        toast.success('Трек добавлен!', { position: 'top-center' })
         newTrackCode.value = ''
         newDescription.value = ''
         showAddModal.value = false
         await getProducts()
     } catch (error: any) {
-        toast.error(error.response?.data?.message || 'Қате', { position: 'top-center' })
+        toast.error(error.response?.data?.message || 'Ошибка', { position: 'top-center' })
     } finally {
         addLoading.value = false
     }
@@ -96,16 +96,16 @@ async function searchTrack() {
 
 async function deleteTrack(e: Event, productId: string) {
     e.stopPropagation()
-    if (!confirm('Жою: ' + productId + '?')) return
+    if (!confirm('Удалить: ' + productId + '?')) return
     
     try {
         await $axios.delete('products/' + productId, {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
-        toast.success('Жойылды', { position: 'top-center' })
+        toast.success('Удалено', { position: 'top-center' })
         await getProducts()
     } catch {
-        toast.error('Қате', { position: 'top-center' })
+        toast.error('Ошибка', { position: 'top-center' })
     }
 }
 
@@ -133,8 +133,8 @@ function clearSearch() {
 
 function getSteps(product: Product) {
     return [
-        { title: 'Тіркелу', date: product.client_registered, step: 1, color: '#ef4444' },
-        { title: 'Қытай', date: product.china_warehouse, step: 2, color: '#eab308' },
+        { title: 'Регистрация', date: product.client_registered, step: 1, color: '#ef4444' },
+        { title: 'Китай', date: product.china_warehouse, step: 2, color: '#eab308' },
         { title: 'AIcargo', date: product.aicargo, step: 3, color: '#22c55e' }
     ]
 }
@@ -151,55 +151,47 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- Not logged in -->
     <div v-if="!isLoggedIn" class="login-required">
         <div class="login-card">
             <div class="login-icon">📦</div>
-            <h2>Менің тауарларым</h2>
-            <p>Тауарларды көру үшін жүйеге кіріңіз</p>
-            <button class="login-btn" @click="goToLogin">Кіру</button>
+            <h2>Мои товары</h2>
+            <p>Войдите, чтобы просмотреть товары</p>
+            <button class="login-btn" @click="goToLogin">Войти</button>
         </div>
     </div>
 
-    <!-- Products page -->
     <div v-else class="products-page">
-        <!-- Header -->
         <div class="page-header">
-            <h1>Менің тауарларым</h1>
-            <button @click="showAddModal = true" class="add-btn">+ Қосу</button>
+            <h1>Мои товары</h1>
+            <button @click="showAddModal = true" class="add-btn">+ Добавить</button>
         </div>
 
-        <!-- Tabs -->
         <div class="page-tabs">
             <button class="page-tab" :class="{ active: activeTab === 'active' }" @click="activeTab = 'active'">
-                Белсенді <span class="tab-count">{{ activeProducts.length }}</span>
+                Активные <span class="tab-count">{{ activeProducts.length }}</span>
             </button>
             <button class="page-tab" :class="{ active: activeTab === 'archive' }" @click="activeTab = 'archive'">
-                Мұрағат <span class="tab-count">{{ archivedProducts.length }}</span>
+                Архив <span class="tab-count">{{ archivedProducts.length }}</span>
             </button>
         </div>
 
-        <!-- Search -->
         <div class="search-box">
             <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input v-model="searchQuery" @keyup.enter="searchTrack" type="text" placeholder="Трек-код бойынша іздеу..." />
+            <input v-model="searchQuery" @keyup.enter="searchTrack" type="text" placeholder="Поиск по трек-коду..." />
             <button v-if="isSearchMode" @click="clearSearch" class="search-clear">✕</button>
         </div>
 
-        <!-- Loading -->
         <div v-if="loading" class="loading">
             <div class="spinner"></div>
         </div>
 
-        <!-- Empty -->
         <div v-else-if="!products.length" class="empty">
             <div class="empty-icon">{{ activeTab === 'active' ? '📦' : '✅' }}</div>
-            <h3>{{ activeTab === 'active' ? 'Белсенді тауарлар жоқ' : 'Мұрағат бос' }}</h3>
-            <p>{{ activeTab === 'active' ? 'Бірінші трегіңізді қосыңыз' : 'Алынған тауарлар осы жерде көрінеді' }}</p>
-            <button v-if="activeTab === 'active'" @click="showAddModal = true" class="btn-primary">+ Трек қосу</button>
+            <h3>{{ activeTab === 'active' ? 'Нет активных товаров' : 'Архив пуст' }}</h3>
+            <p>{{ activeTab === 'active' ? 'Добавьте свой первый трек' : 'Полученные товары появятся здесь' }}</p>
+            <button v-if="activeTab === 'active'" @click="showAddModal = true" class="btn-primary">+ Добавить трек</button>
         </div>
 
-        <!-- Products List -->
         <div v-else class="products-list">
             <div v-for="product in products" :key="product.id" class="product-card" @click="viewTrack(product.productId)">
                 <div class="card-header" :class="{ archived: activeTab === 'archive' }">
@@ -217,8 +209,8 @@ onMounted(() => {
                     </div>
                 </div>
                 <div class="card-desc">
-                    <span class="desc-label">Сипаттама</span>
-                    <p class="desc-text">{{ product.description || 'Көрсетілмеген' }}</p>
+                    <span class="desc-label">Описание</span>
+                    <p class="desc-text">{{ product.description || 'Не указано' }}</p>
                 </div>
                 <div class="card-timeline">
                     <div v-for="step in getSteps(product)" :key="step.step" class="timeline-row">
@@ -235,18 +227,17 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- Add Modal -->
         <Teleport to="body">
             <div v-if="showAddModal" class="modal-overlay" @click.self="showAddModal = false">
                 <div class="modal">
                     <div class="modal-header">
-                        <button @click="showAddModal = false" class="modal-cancel">Бас тарту</button>
-                        <h3>Жаңа трек</h3>
-                        <button @click="addTrack" :disabled="addLoading || !newTrackCode.trim() || !newDescription.trim()" class="modal-submit">{{ addLoading ? '...' : 'Қосу' }}</button>
+                        <button @click="showAddModal = false" class="modal-cancel">Отмена</button>
+                        <h3>Новый трек</h3>
+                        <button @click="addTrack" :disabled="addLoading || !newTrackCode.trim() || !newDescription.trim()" class="modal-submit">{{ addLoading ? '...' : 'Добавить' }}</button>
                     </div>
                     <div class="modal-body">
                         <input v-model="newTrackCode" type="text" placeholder="Трек-код" class="modal-input" />
-                        <textarea v-model="newDescription" placeholder="Тауар сипаттамасы..." rows="4" class="modal-textarea"></textarea>
+                        <textarea v-model="newDescription" placeholder="Описание товара..." rows="4" class="modal-textarea"></textarea>
                     </div>
                 </div>
             </div>

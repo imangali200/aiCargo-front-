@@ -1,29 +1,26 @@
 <template>
     <div class="auth-page">
-        <!-- Back button -->
         <button @click="$router.back()" class="back-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
         </button>
 
         <div class="auth-content">
-            <!-- Header -->
             <div class="auth-header">
                 <h1 class="auth-title">AI Market</h1>
-                <p class="auth-subtitle">Тіркеліп, тауарларыңызды қадағалаңыз және постар жариялаңыз.</p>
+                <p class="auth-subtitle">Зарегистрируйтесь, отслеживайте товары и публикуйте посты.</p>
             </div>
 
-            <!-- Form -->
             <form @submit.prevent="postRegister" class="auth-form">
                 <input 
                     v-model="phoneNumber" 
                     ref="phoneInput" 
                     type="text" 
-                    placeholder="Телефон номері"
+                    placeholder="Номер телефона"
                     class="auth-input"
                 />
 
                 <select v-model="selectBranch" class="auth-input auth-select">
-                    <option value="">Қоймаңызды таңдаңыз</option>
+                    <option value="">Выберите склад</option>
                     <option v-for="branch in branches" :key="branch.id" :value="branch.branchName">
                         {{ branch.branchName }}
                     </option>
@@ -40,7 +37,7 @@
                     <input 
                         v-model="name" 
                         type="text" 
-                        placeholder="Атыңыз"
+                        placeholder="Имя"
                         class="auth-input"
                     />
                 </div>
@@ -48,14 +45,14 @@
                 <input 
                     v-model="surname" 
                     type="text" 
-                    placeholder="Тегіңіз"
+                    placeholder="Фамилия"
                     class="auth-input"
                 />
 
                 <input 
                     v-model="password" 
                     type="password" 
-                    placeholder="Құпия сөз"
+                    placeholder="Пароль"
                     class="auth-input"
                     :class="{ error: errorMessage }"
                 />
@@ -63,18 +60,16 @@
                 <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
 
                 <button type="submit" class="auth-submit" :disabled="isLoading">
-                    {{ isLoading ? '...' : 'Тіркелу' }}
+                    {{ isLoading ? '...' : 'Зарегистрироваться' }}
                 </button>
             </form>
 
-            <!-- Divider -->
             <div class="auth-divider">
-                <span>немесе</span>
+                <span>или</span>
             </div>
 
-            <!-- Login Link -->
             <RouterLink to="/auth/login" class="login-btn">
-                Кіру
+                Войти
             </RouterLink>
         </div>
     </div>
@@ -121,7 +116,7 @@ async function getBranches() {
 
 async function postRegister() {
     if (!phoneNumber.value || !codeUser.value || !name.value || !surname.value || !selectBranch.value || !password.value) {
-        errorMessage.value = "Барлық өрістерді толтырыңыз";
+        errorMessage.value = "Заполните все поля";
         return;
     }
 
@@ -144,7 +139,7 @@ async function postRegister() {
             return navigateTo("/");
         }
     } catch (error) {
-        errorMessage.value = "Тіркелу кезінде қате орын алды";
+        errorMessage.value = "Ошибка при регистрации";
     } finally {
         isLoading.value = false;
     }

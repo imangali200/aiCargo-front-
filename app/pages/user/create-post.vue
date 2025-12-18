@@ -17,11 +17,11 @@ const isLoggedIn = computed(() => !!token.value)
 
 async function createPost() {
     if (!link.value.trim()) {
-        toast.warning('Сілтемені енгізіңіз', { position: 'top-center' })
+        toast.warning('Введите ссылку', { position: 'top-center' })
         return
     }
     if (!review.value.trim()) {
-        toast.warning('Пікір жазыңыз', { position: 'top-center' })
+        toast.warning('Введите отзыв', { position: 'top-center' })
         return
     }
 
@@ -34,11 +34,11 @@ async function createPost() {
             },
             { headers: { 'Authorization': `Bearer ${token.value}` } }
         )
-        toast.success('Пост жарияланды!', { position: 'top-center' })
+        toast.success('Пост опубликован!', { position: 'top-center' })
         router.push('/user')
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Қате', { position: 'top-center' })
+        toast.error(error.response?.data?.message || 'Ошибка', { position: 'top-center' })
     } finally {
         submitting.value = false
     }
@@ -54,35 +54,33 @@ function goToLogin() {
 </script>
 
 <template>
-    <!-- Not logged in -->
     <div v-if="!isLoggedIn" class="login-required">
         <div class="login-card">
             <div class="login-icon">✏️</div>
-            <h2>Пост жазу</h2>
-            <p>Пост жариялау үшін жүйеге кіріңіз</p>
-            <button class="login-btn" @click="goToLogin">Кіру</button>
+            <h2>Создать пост</h2>
+            <p>Войдите, чтобы создать пост</p>
+            <button class="login-btn" @click="goToLogin">Войти</button>
         </div>
     </div>
 
-    <!-- Create post -->
     <div v-else class="create-page">
         <div class="create-header">
-            <button @click="goBack" class="cancel-btn">Бас тарту</button>
-            <h1>Жаңа пост</h1>
+            <button @click="goBack" class="cancel-btn">Отмена</button>
+            <h1>Новый пост</h1>
             <button @click="createPost" :disabled="submitting || !link.trim() || !review.trim()" class="submit-btn">
-                {{ submitting ? '...' : 'Жариялау' }}
+                {{ submitting ? '...' : 'Опубликовать' }}
             </button>
         </div>
 
         <div class="create-form">
             <div class="form-group">
-                <label>Сілтеме</label>
+                <label>Ссылка</label>
                 <input v-model="link" type="url" placeholder="https://example.com/product" class="form-input" />
             </div>
 
             <div class="form-group">
-                <label>Пікір</label>
-                <textarea v-model="review" placeholder="Осы тауар туралы не ойлайсыз?..." rows="6" class="form-textarea"></textarea>
+                <label>Отзыв</label>
+                <textarea v-model="review" placeholder="Что вы думаете об этом товаре?..." rows="6" class="form-textarea"></textarea>
             </div>
         </div>
     </div>

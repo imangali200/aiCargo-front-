@@ -49,17 +49,62 @@ const isLoggedIn = computed(() => !!token.value)
 
 const posts = ref<Post[]>([])
 const loading = ref(false)
+const allPostsSeen = ref(false)
 
 const expandedComments = ref<Set<number>>(new Set())
 const commentText = ref<{ [key: number]: string }>({})
 
 const showLoginModal = ref(false)
 
+// Получить ID просмотренных постов из localStorage
+function getSeenPostIds(): Set<number> {
+    if (typeof window === 'undefined') return new Set()
+    const stored = localStorage.getItem('seenPosts')
+    return stored ? new Set(JSON.parse(stored)) : new Set()
+}
+
+// Сохранить ID просмотренных постов
+function saveSeenPostIds(ids: Set<number>) {
+    if (typeof window === 'undefined') return
+    localStorage.setItem('seenPosts', JSON.stringify([...ids]))
+}
+
+// Отметить посты как просмотренные
+function markPostsAsSeen(postIds: number[]) {
+    const seenIds = getSeenPostIds()
+    postIds.forEach(id => seenIds.add(id))
+    saveSeenPostIds(seenIds)
+}
+
+// Сбросить просмотренные посты
+function resetSeenPosts() {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem('seenPosts')
+    allPostsSeen.value = false
+    getPosts()
+}
+
 async function getPosts() {
     loading.value = true
     try {
         const response = await $axios.get('post')
-        posts.value = Array.isArray(response.data) ? response.data : [response.data]
+        const allPosts: Post[] = Array.isArray(response.data) ? response.data : [response.data]
+        
+        // Получить ID просмотренных постов
+        const seenIds = getSeenPostIds()
+        
+        // Фильтровать - показать только новые посты
+        const newPosts = allPosts.filter(post => !seenIds.has(post.id))
+        
+        if (newPosts.length === 0 && allPosts.length > 0) {
+            // Все посты просмотрены
+            allPostsSeen.value = true
+            posts.value = []
+        } else {
+            posts.value = newPosts
+            // Отметить показанные посты как просмотренные
+            markPostsAsSeen(newPosts.map(p => p.id))
+        }
     } catch {
         posts.value = []
     } finally {
@@ -221,6 +266,14 @@ onMounted(() => {
             <div class="spinner"></div>
         </div>
 
+        <!-- Все посты просмотрены -->
+        <div v-else-if="allPostsSeen" class="empty-feed">
+            <div class="empty-icon">✅</div>
+            <h3>Вы всё просмотрели!</h3>
+            <p>Новых постов пока нет</p>
+            <button @click="resetSeenPosts" class="reset-btn">Показать снова</button>
+        </div>
+
         <div v-else-if="!posts.length" class="empty-feed">
             <div class="empty-icon">📝</div>
             <h3>Нет постов</h3>
@@ -314,7 +367,9 @@ onMounted(() => {
 .empty-feed { text-align: center; padding: 60px 20px; }
 .empty-icon { font-size: 48px; margin-bottom: 16px; }
 .empty-feed h3 { font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 8px; }
-.empty-feed p { color: #777; margin: 0; }
+.empty-feed p { color: #777; margin: 0 0 20px; }
+.reset-btn { padding: 12px 24px; background: #fff; border: none; border-radius: 20px; color: #000; font-size: 15px; font-weight: 600; cursor: pointer; }
+.reset-btn:hover { background: #e5e5e5; }
 
 .feed { padding: 8px 0; }
 .posts { display: flex; flex-direction: column; }

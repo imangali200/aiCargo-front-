@@ -61,10 +61,10 @@ function formatDate(date: string) {
     const postDate = new Date(date)
     const diff = Math.floor((now.getTime() - postDate.getTime()) / 1000)
     
-    if (diff < 60) return 'қазір'
+    if (diff < 60) return 'сейчас'
     if (diff < 3600) return Math.floor(diff / 60) + ' мин'
-    if (diff < 86400) return Math.floor(diff / 3600) + ' сағ'
-    if (diff < 604800) return Math.floor(diff / 86400) + ' күн'
+    if (diff < 86400) return Math.floor(diff / 3600) + ' ч'
+    if (diff < 604800) return Math.floor(diff / 86400) + ' дн'
     return postDate.toLocaleDateString('ru-RU')
 }
 
@@ -80,22 +80,19 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- Not logged in -->
     <div v-if="!isLoggedIn" class="login-required">
         <div class="login-card">
             <div class="login-icon">👤</div>
             <h2>Профиль</h2>
-            <p>Профильді көру үшін жүйеге кіріңіз</p>
-            <button class="login-btn" @click="goToLogin">Кіру</button>
+            <p>Войдите, чтобы просмотреть профиль</p>
+            <button class="login-btn" @click="goToLogin">Войти</button>
         </div>
     </div>
 
-    <!-- Loading -->
     <div v-else-if="loading" class="loading-screen">
         <div class="spinner"></div>
     </div>
 
-    <!-- Profile -->
     <div v-else-if="profile" class="profile-page">
         <div class="profile-header">
             <div class="profile-info">
@@ -106,23 +103,22 @@ onMounted(() => {
         </div>
 
         <div class="profile-stats">
-            <span class="stat">{{ profile.posts?.length || 0 }} пост</span>
+            <span class="stat">{{ profile.posts?.length || 0 }} постов</span>
         </div>
 
         <div class="profile-actions">
-            <button class="action-btn logout" @click="logout">Шығу</button>
+            <button class="action-btn logout" @click="logout">Выйти</button>
             <a :href="'tel:' + profile.phoneNumber" class="action-btn phone">📞 {{ profile.phoneNumber }}</a>
         </div>
 
         <div class="profile-tabs">
-            <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Посттар</button>
-            <button :class="{ active: activeTab === 'likes' }" @click="activeTab = 'likes'">Ұнатқандар</button>
+            <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Посты</button>
+            <button :class="{ active: activeTab === 'likes' }" @click="activeTab = 'likes'">Понравившиеся</button>
         </div>
 
-        <!-- Posts Tab -->
         <div v-if="activeTab === 'posts'" class="tab-content">
             <div v-if="!profile.posts?.length" class="empty-tab">
-                <p>Посттар жоқ</p>
+                <p>Нет постов</p>
             </div>
             <div v-else class="posts-list">
                 <div v-for="post in profile.posts" :key="post.id" class="post-card">
@@ -136,10 +132,9 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- Likes Tab -->
         <div v-if="activeTab === 'likes'" class="tab-content">
             <div v-if="!profile.postLikes?.length" class="empty-tab">
-                <p>Ұнатылған посттар жоқ</p>
+                <p>Нет понравившихся постов</p>
             </div>
             <div v-else class="posts-list">
                 <div v-for="post in profile.postLikes" :key="post.id" class="post-card">
@@ -169,7 +164,6 @@ onMounted(() => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .profile-page { padding: 20px 0; }
-
 .profile-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
 .profile-info { flex: 1; }
 .profile-name { font-size: 22px; font-weight: 700; color: #fff; margin: 0 0 4px; }

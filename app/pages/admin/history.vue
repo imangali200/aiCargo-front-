@@ -36,7 +36,7 @@
           <input 
             type="text" 
             v-model="searchQuery"
-            placeholder="Трек-код іздеу..."
+            placeholder="Поиск по трек-коду..."
             class="tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-3 tw-py-2 tw-text-white tw-text-sm tw-outline-none focus:tw-border-cyan-500/50 placeholder:tw-text-white/60"
           >
         </div>
@@ -47,42 +47,42 @@
     <div class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-4 tw-gap-4 tw-mb-6">
       <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-white">{{ stats.total }}</p>
-        <p class="tw-text-white/60 tw-text-sm">Барлығы</p>
+        <p class="tw-text-white/60 tw-text-sm">Все</p>
       </div>
       <div class="tw-bg-blue-500/10 tw-border tw-border-blue-500/20 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-blue-400">{{ stats.registered }}</p>
-        <p class="tw-text-blue-400/70 tw-text-sm">Тіркелді</p>
+        <p class="tw-text-blue-400/70 tw-text-sm">Зарегистрировано</p>
       </div>
       <div class="tw-bg-cyan-500/10 tw-border tw-border-cyan-500/20 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-cyan-400">{{ stats.atWarehouse }}</p>
-        <p class="tw-text-cyan-400/70 tw-text-sm">Складта</p>
+        <p class="tw-text-cyan-400/70 tw-text-sm">На складе</p>
       </div>
       <div class="tw-bg-emerald-500/10 tw-border tw-border-emerald-500/20 tw-rounded-xl tw-p-4 tw-text-center">
         <p class="tw-text-2xl tw-font-bold tw-text-emerald-400">{{ stats.completed }}</p>
-        <p class="tw-text-emerald-400/70 tw-text-sm">Берілді</p>
+        <p class="tw-text-emerald-400/70 tw-text-sm">Выдано</p>
       </div>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="tw-text-center tw-py-16">
       <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-      <p class="tw-mt-4 tw-text-white/60">Жүктелуде...</p>
+      <p class="tw-mt-4 tw-text-white/60">Загрузка...</p>
     </div>
 
     <!-- History List -->
     <div v-else class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-overflow-hidden">
       <div class="tw-px-5 tw-py-4 tw-border-b tw-border-white/10 tw-flex tw-items-center tw-justify-between">
-        <h2 class="tw-text-lg tw-font-semibold tw-text-white">Товарлар тізімі</h2>
-        <span class="tw-text-white/60 tw-text-sm">{{ filteredProducts.length }} жазба</span>
+        <h2 class="tw-text-lg tw-font-semibold tw-text-white">Список товаров</h2>
+        <span class="tw-text-white/60 tw-text-sm">{{ filteredProducts.length }} записей</span>
       </div>
       
       <!-- Table Header -->
       <div class="tw-hidden sm:tw-grid tw-grid-cols-12 tw-gap-4 tw-px-5 tw-py-3 tw-bg-white/[0.02] tw-border-b tw-border-white/10">
         <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Трек-код</span>
-        <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Сипаттама</span>
+        <span class="tw-col-span-3 tw-text-white/60 tw-text-sm tw-font-medium">Описание</span>
         <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Статус</span>
-        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Тіркелген</span>
-        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Соңғы өзгеріс</span>
+        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Зарегистрирован</span>
+        <span class="tw-col-span-2 tw-text-white/60 tw-text-sm tw-font-medium">Последнее изменение</span>
       </div>
 
       <!-- Table Body -->
@@ -101,7 +101,7 @@
             
             <!-- Product Name -->
             <div class="tw-col-span-3">
-              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Сипаттама: </span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Описание: </span>
               <span class="tw-text-white/70">{{ item.productName || '—' }}</span>
             </div>
             
@@ -119,23 +119,23 @@
             
             <!-- Registered Date -->
             <div class="tw-col-span-2">
-              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Тіркелген: </span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Зарегистрирован: </span>
               <span class="tw-text-white/60 tw-text-sm">{{ formatDate(item.client_registered) }}</span>
             </div>
             
             <!-- Last Update -->
             <div class="tw-col-span-2">
-              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Соңғы: </span>
+              <span class="tw-text-white/60 tw-text-xs sm:tw-hidden">Последнее: </span>
               <span class="tw-text-white/60 tw-text-sm">{{ formatDate(getLastUpdate(item)) }}</span>
             </div>
           </div>
 
           <!-- Timeline (mobile) -->
           <div class="tw-mt-3 tw-flex tw-flex-wrap tw-gap-2 sm:tw-hidden">
-            <span v-if="item.client_registered" class="tw-px-2 tw-py-0.5 tw-bg-blue-500/20 tw-text-blue-400 tw-text-xs tw-rounded">📝 Тіркелді</span>
-            <span v-if="item.china_warehouse" class="tw-px-2 tw-py-0.5 tw-bg-amber-500/20 tw-text-amber-400 tw-text-xs tw-rounded">🇨🇳 Қытайда</span>
-            <span v-if="item.aicargo" class="tw-px-2 tw-py-0.5 tw-bg-cyan-500/20 tw-text-cyan-400 tw-text-xs tw-rounded">📦 Складта</span>
-            <span v-if="item.given_to_client" class="tw-px-2 tw-py-0.5 tw-bg-emerald-500/20 tw-text-emerald-400 tw-text-xs tw-rounded">✅ Берілді</span>
+            <span v-if="item.client_registered" class="tw-px-2 tw-py-0.5 tw-bg-blue-500/20 tw-text-blue-400 tw-text-xs tw-rounded">📝 Зарегистрировано</span>
+            <span v-if="item.china_warehouse" class="tw-px-2 tw-py-0.5 tw-bg-amber-500/20 tw-text-amber-400 tw-text-xs tw-rounded">🇨🇳 В Китае</span>
+            <span v-if="item.aicargo" class="tw-px-2 tw-py-0.5 tw-bg-cyan-500/20 tw-text-cyan-400 tw-text-xs tw-rounded">📦 На складе</span>
+            <span v-if="item.given_to_client" class="tw-px-2 tw-py-0.5 tw-bg-emerald-500/20 tw-text-emerald-400 tw-text-xs tw-rounded">✅ Выдано</span>
           </div>
         </div>
 
@@ -146,7 +146,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
           </div>
-          <p class="tw-text-white/60">Товарлар табылмады</p>
+          <p class="tw-text-white/60">Товары не найдены</p>
         </div>
       </div>
     </div>
@@ -171,10 +171,10 @@ const activeTab = ref('all')
 const searchQuery = ref('')
 
 const tabs = [
-  { label: 'Барлығы', value: 'all' },
-  { label: '📝 Тіркелді', value: 'registered' },
-  { label: '📦 Складта', value: 'warehouse' },
-  { label: '✅ Берілді', value: 'completed' }
+  { label: 'Все', value: 'all' },
+  { label: '📝 Зарегистрировано', value: 'registered' },
+  { label: '📦 На складе', value: 'warehouse' },
+  { label: '✅ Выдано', value: 'completed' }
 ]
 
 interface Product {
@@ -222,10 +222,10 @@ const filteredProducts = computed(() => {
 })
 
 const getStatusLabel = (item: Product) => {
-  if (item.given_to_client) return '✅ Берілді'
-  if (item.aicargo) return '📦 Складта'
-  if (item.china_warehouse) return '🇨🇳 Қытайда'
-  return '📝 Тіркелді'
+  if (item.given_to_client) return '✅ Выдано'
+  if (item.aicargo) return '📦 На складе'
+  if (item.china_warehouse) return '🇨🇳 В Китае'
+  return '📝 Зарегистрировано'
 }
 
 const getStatusStyle = (item: Product) => {
@@ -268,7 +268,7 @@ const fetchProducts = async () => {
     
   } catch (err: any) {
     console.error('Products fetch error:', err)
-    toast.error('Деректерді жүктеу кезінде қате болды', { position: 'top-center' })
+    toast.error('Ошибка при загрузке данных', { position: 'top-center' })
   } finally {
     loading.value = false
   }
