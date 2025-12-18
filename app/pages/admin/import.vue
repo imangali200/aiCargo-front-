@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="tw-mb-6">
       <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
-        <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/admin">Главная</router-link>
+        <router-link class="tw-text-amber-400 hover:tw-text-amber-300 tw-transition-colors" to="/admin">Главная</router-link>
         <span class="tw-text-white/60">→</span>
         <span class="tw-text-white/60">Импорт</span>
       </div>
@@ -40,7 +40,7 @@
             <button 
               type="button"
               @click="openFilePicker"
-              class="tw-px-4 tw-py-2.5 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-font-medium tw-text-sm hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all tw-flex tw-items-center tw-gap-2"
+              class="tw-px-4 tw-py-2.5 tw-bg-gradient-to-r tw-from-amber-500 tw-to-orange-500 tw-rounded-xl tw-text-white tw-font-medium tw-text-sm hover:tw-shadow-lg hover:tw-shadow-amber-500/30 tw-transition-all tw-flex tw-items-center tw-gap-2"
             >
               <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
@@ -59,7 +59,7 @@
           <input 
             type="datetime-local"
             v-model="selectedTime"
-            class="tw-flex-1 sm:tw-max-w-xs tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-2.5 tw-text-white tw-outline-none focus:tw-border-cyan-500/50 tw-transition-colors"
+            class="tw-flex-1 sm:tw-max-w-xs tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-px-4 tw-py-2.5 tw-text-white tw-outline-none focus:tw-border-amber-500/50 tw-transition-colors"
           >
         </div>
 
@@ -100,8 +100,8 @@
 
     <!-- Instructions -->
     <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-5">
-      <div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
-        <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-violet-500/20 tw-flex tw-items-center tw-justify-center tw-text-violet-400">
+        <div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
+        <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-amber-500/20 tw-flex tw-items-center tw-justify-center tw-text-amber-400">
           <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
@@ -110,15 +110,15 @@
       </div>
       <ul class="tw-space-y-2 tw-text-white/60 tw-text-sm">
         <li class="tw-flex tw-items-start tw-gap-2">
-          <span class="tw-text-violet-400">•</span>
+          <span class="tw-text-amber-400">•</span>
           Трек-коды должны быть размещены начиная с первого столбца (A)
         </li>
         <li class="tw-flex tw-items-start tw-gap-2">
-          <span class="tw-text-violet-400">•</span>
+          <span class="tw-text-amber-400">•</span>
           Файл должен быть в формате .xlsx или .txt
         </li>
         <li class="tw-flex tw-items-start tw-gap-2">
-          <span class="tw-text-violet-400">•</span>
+          <span class="tw-text-amber-400">•</span>
           Каждый трек-код на отдельной строке
         </li>
       </ul>
