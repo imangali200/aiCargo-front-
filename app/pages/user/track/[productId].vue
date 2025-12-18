@@ -34,208 +34,154 @@ async function getProduct() {
         })
         product.value = response.data
     } catch (error: any) {
-        console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при загрузке', { position: 'top-center'  })
+        toast.error(error.response?.data?.message || 'Ошибка', { position: 'top-center' })
     } finally {
         loading.value = false
     }
 }
 
-const formatDate = (time: string | null) => {
-    if (!time) return '—'
-    return new Date(time).toLocaleString('ru-RU', {
-        year: 'numeric',
-        month: '2-digit',
+async function deleteTrack() {
+    if (!confirm('Удалить этот трек?')) return
+    try {
+        await $axios.delete(`products/${productId}`, {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        toast.success('Удалено', { position: 'top-center' })
+        router.push('/user/products')
+    } catch {
+        toast.error('Ошибка', { position: 'top-center' })
+    }
+}
+
+function formatDate(date: string | null) {
+    if (!date) return null
+    return new Date(date).toLocaleString('ru-RU', {
         day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     })
 }
 
-const goBack = () => router.back()
+function goBack() {
+    router.push('/user/products')
+}
 
-// Статус шагов
-const getSteps = computed(() => {
+const steps = computed(() => {
     if (!product.value) return []
-    
     return [
-        {
-            step: 1,
-            title: 'Зарегистрирован',
-            description: 'Трек-код создан',
-            date: product.value.client_registered,
-            completed: !!product.value.client_registered,
-            icon: '📝'
-        },
-        {
-            step: 2,
-            title: 'Склад в Китае',
-            description: 'Посылка принята',
-            date: product.value.china_warehouse,
-            completed: !!product.value.china_warehouse,
-            icon: '🏭'
-        },
-        {
-            step: 3,
-            title: 'Склад в Таразе',
-            description: 'В Казахстане',
-            date: product.value.aicargo,
-            completed: !!product.value.aicargo,
-            icon: '📦'
-        },
-        {
-            step: 4,
-            title: 'Получен',
-            description: 'Выдан вам',
-            date: product.value.given_to_client,
-            completed: !!product.value.given_to_client,
-            icon: '✅'
-        }
+        { title: 'Регистрация', date: product.value.client_registered, step: 1, color: '#ef4444' },
+        { title: 'Китай', date: product.value.china_warehouse, step: 2, color: '#eab308' },
+        { title: 'AIcargo', date: product.value.aicargo, step: 3, color: '#22c55e' }
     ]
 })
 
 const currentStep = computed(() => {
     if (!product.value) return 0
-    if (product.value.given_to_client) return 4
     if (product.value.aicargo) return 3
     if (product.value.china_warehouse) return 2
-    return 1
+    if (product.value.client_registered) return 1
+    return 0
 })
-
-const progressPercent = computed(() => (currentStep.value / 4) * 100)
 
 onMounted(() => getProduct())
 </script>
 
 <template>
-    <div class="tw-mt-5 tw-px-0 md:tw-px-3 tw-pb-6">
-        <!-- Навигация -->
-        <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-flex-wrap">
-            <router-link class="tw-text-[#0891B2] hover:tw-underline" to="/user">Главная</router-link>
-            <span class="tw-text-gray-400">/</span>
-            <span class="tw-text-gray-500 tw-font-mono tw-bg-gray-100 tw-px-2 tw-py-0.5 tw-rounded">{{ productId }}</span>
-        </div>
-
+    <div class="track-page">
         <!-- Loading -->
-        <div v-if="loading" class="tw-mt-10 tw-text-center tw-py-16">
-            <div class="tw-inline-block tw-animate-spin tw-rounded-full tw-h-12 tw-w-12 tw-border-4 tw-border-[#0891B2] tw-border-t-transparent"></div>
-            <p class="tw-mt-4 tw-text-gray-500">Загрузка...</p>
+        <div v-if="loading" class="loading">
+            <div class="spinner"></div>
         </div>
 
         <!-- Content -->
-        <div v-else-if="product" class="tw-mt-6">
+        <div v-else-if="product" class="track-content">
             
-            <!-- Main Card -->
-            <div class="tw-bg-gradient-to-br tw-from-[#0891B2] tw-to-[#0e7490] tw-rounded-2xl tw-p-6 tw-text-white tw-shadow-lg">
-                <div class="tw-flex tw-items-start tw-justify-between">
-                    <div>
-                        <p class="tw-text-white/70 tw-text-sm tw-mb-1">Трек-код</p>
-                        <p class="tw-text-2xl sm:tw-text-[20px] tw-font-bold tw-font-mono tw-tracking-wider">
-                            {{ product.productId.toUpperCase() }}
-                        </p>
-                        <p v-if="product.description" class="tw-text-white/80 tw-text-sm tw-mt-2">
-                            📦 {{ product.description }}
-                        </p>
+            <!-- Green Header Card -->
+            <div class="header-card">
+                <div class="header-top">
+                    <div class="header-info">
+                        <span class="header-label">Трек-код</span>
+                        <h1 class="header-code">{{ product.productId.toUpperCase() }}</h1>
                     </div>
-                    <button 
-                        @click="goBack"
-                        class="tw-bg-white/20 hover:tw-bg-white/30 tw-px-4 tw-py-2 tw-rounded-lg tw-text-sm tw-transition-colors"
-                    >
-                        ← Назад
+                    <button @click="deleteTrack" class="delete-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
                     </button>
                 </div>
-                
-                <!-- Progress -->
-                <div class="tw-mt-6">
-                    <div class="tw-flex tw-justify-between tw-text-sm tw-mb-2">
-                        <span class="tw-text-white/70">Прогресс доставки</span>
-                        <span class="tw-font-medium">{{ currentStep }} из 4</span>
-                    </div>
-                    <div class="tw-h-3 tw-bg-white/20 tw-rounded-full tw-overflow-hidden">
-                        <div 
-                            class="tw-h-full tw-bg-white tw-rounded-full tw-transition-all tw-duration-500"
-                            :style="{ width: progressPercent + '%' }"
-                        ></div>
+                <div class="header-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" :style="{ width: (currentStep / 3 * 100) + '%' }"></div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Status Badge -->
-                <div class="tw-mt-4 tw-flex tw-items-center tw-gap-2">
-                    <span 
-                        :class="currentStep === 4 
-                            ? 'tw-bg-green-400 tw-text-green-900' 
-                            : 'tw-bg-yellow-400 tw-text-yellow-900'"
-                        class="tw-px-3 tw-py-1 tw-rounded-full tw-text-xs tw-font-semibold"
-                    >
-                        {{ currentStep === 4 ? '✓ Получен' : '⏳ В пути' }}
+            <!-- Description Card -->
+            <div class="desc-card">
+                <span class="desc-label">Описание</span>
+                <p class="desc-text">{{ product.description || 'Не указано' }}</p>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline">
+                <div v-for="step in steps" :key="step.step" class="timeline-item">
+                    <div class="timeline-dot" :class="{ active: step.date }" :style="step.date ? { background: step.color } : {}">
+                        <svg v-if="step.date" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+                        <span v-else>{{ step.step }}</span>
+                    </div>
+                    <span class="timeline-title" :class="{ active: step.date }">{{ step.title }}</span>
+                    <span class="timeline-date" :class="{ active: step.date }" :style="step.date ? { color: step.color } : {}">
+                        {{ step.date ? formatDate(step.date) : '—' }}
                     </span>
                 </div>
             </div>
 
-            <!-- Timeline -->
-            <div class="tw-bg-white tw-rounded-2xl tw-p-6 tw-shadow-sm tw-border tw-border-gray-100 tw-mt-4">
-                <h3 class="tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center tw-gap-2">
-                    <span class="tw-text-xl">📍</span> История
-                </h3>
-                
-                <div class="tw-relative">
-                    <!-- Vertical line -->
-                    <div class="tw-absolute tw-left-4 tw-top-0 tw-bottom-0 tw-w-0.5 tw-bg-gray-200"></div>
-                    <div 
-                        class="tw-absolute tw-left-4 tw-top-0 tw-w-0.5 tw-bg-[#0891B2] tw-transition-all tw-duration-500"
-                        :style="{ height: ((currentStep - 1) * 25 + 12.5) + '%' }"
-                    ></div>
-
-                    <div class="tw-space-y-4">
-                        <div 
-                            v-for="step in getSteps" 
-                            :key="step.step"
-                            class="tw-relative tw-flex tw-items-start tw-gap-4 tw-pl-1"
-                        >
-                            <div 
-                                :class="step.completed 
-                                    ? 'tw-bg-[#0891B2] tw-text-white tw-shadow-lg tw-shadow-cyan-200' 
-                                    : 'tw-bg-gray-100 tw-text-gray-400 tw-border-2 tw-border-gray-200'"
-                                class="tw-relative tw-z-10 tw-w-7 tw-h-7 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-xs tw-flex-shrink-0"
-                            >
-                                <span v-if="step.completed">{{ step.icon }}</span>
-                                <span v-else>{{ step.step }}</span>
-                            </div>
-                            
-                            <div 
-                                :class="step.completed ? 'tw-bg-cyan-50 tw-border-cyan-100' : 'tw-bg-gray-50 tw-border-gray-100'"
-                                class="tw-flex-1 tw-p-4 tw-rounded-xl tw-border"
-                            >
-                                <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center sm:tw-justify-between tw-gap-1">
-                                    <div>
-                                        <p :class="step.completed ? 'tw-text-gray-800' : 'tw-text-gray-400'" class="tw-font-semibold">
-                                            {{ step.title }}
-                                        </p>
-                                        <p class="tw-text-xs tw-text-gray-400">{{ step.description }}</p>
-                                    </div>
-                                    <p v-if="step.completed" class="tw-text-sm tw-font-medium tw-text-[#0891B2]">
-                                        {{ formatDate(step.date) }}
-                                    </p>
-                                    <p v-else class="tw-text-sm tw-text-gray-400 tw-italic">Ожидание...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- Not found -->
-        <div v-else-if="!loading" class="tw-mt-10 tw-text-center tw-py-16 tw-bg-white tw-rounded-2xl tw-shadow-sm">
-            <div class="tw-text-6xl tw-mb-4">📦</div>
-            <h3 class="tw-text-xl tw-font-semibold tw-text-gray-700 tw-mb-2">Трек не найден</h3>
-            <p class="tw-text-gray-400 tw-mb-6">Проверьте правильность трек-кода</p>
-            <button 
-                @click="goBack"
-                class="tw-bg-[#0891B2] tw-text-white tw-px-6 tw-py-3 tw-rounded-xl hover:tw-bg-[#0e7490] tw-transition-colors tw-font-medium"
-            >
-                ← Назад
-            </button>
+        <!-- Not Found -->
+        <div v-else class="empty">
+            <div class="empty-icon">📦</div>
+            <h3>Трек не найден</h3>
+            <button @click="goBack" class="btn">← Назад</button>
         </div>
     </div>
 </template>
+
+<style scoped>
+.track-page { padding: 16px 0; }
+
+.loading { display: flex; justify-content: center; padding: 60px 0; }
+.spinner { width: 24px; height: 24px; border: 2px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.track-content { display: flex; flex-direction: column; gap: 12px; }
+
+.header-card { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border-radius: 16px; padding: 20px; }
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.header-info { display: flex; flex-direction: column; gap: 4px; }
+.header-label { font-size: 14px; color: rgba(255,255,255,0.8); }
+.header-code { font-size: 28px; font-weight: 800; color: #fff; margin: 0; letter-spacing: 1px; }
+.delete-btn { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: background 0.2s; }
+.delete-btn:hover { background: rgba(255,255,255,0.3); }
+.header-progress { margin-top: 8px; }
+.progress-bar { height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: #fff; border-radius: 3px; transition: width 0.5s; }
+
+.desc-card { background: #1a1a1a; border-radius: 16px; padding: 16px 20px; }
+.desc-label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; }
+.desc-text { font-size: 16px; color: #fff; margin: 0; }
+
+.timeline { background: #000; border-radius: 16px; padding: 8px 0; }
+.timeline-item { display: flex; align-items: center; padding: 14px 20px; gap: 14px; }
+.timeline-dot { width: 32px; height: 32px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #666; flex-shrink: 0; }
+.timeline-dot.active { color: #fff; }
+.timeline-title { flex: 1; font-size: 16px; color: #555; font-weight: 500; }
+.timeline-title.active { color: #fff; }
+.timeline-date { font-size: 14px; color: #444; font-weight: 500; }
+.timeline-date.active { font-weight: 600; }
+
+.empty { text-align: center; padding: 60px 20px; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty h3 { font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 20px; }
+.btn { padding: 12px 24px; background: #fff; border: none; border-radius: 20px; color: #000; font-size: 15px; font-weight: 600; cursor: pointer; }
+</style>

@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
+    layout: 'warehouse',
     middleware: 'auth'
 })
 

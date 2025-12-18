@@ -235,7 +235,7 @@ import { ref } from 'vue'
 import { useToast } from '~/composables/useToast'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'admin',
   middleware: 'auth'
 })
 

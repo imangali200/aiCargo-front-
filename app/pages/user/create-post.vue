@@ -1,7 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
-    middleware: ['auth', 'user-active']
+    layout: 'default'
 })
 
 import { useToast } from '~/composables/useToast'
@@ -14,14 +13,15 @@ const router = useRouter()
 const link = ref('')
 const review = ref('')
 const submitting = ref(false)
+const isLoggedIn = computed(() => !!token.value)
 
 async function createPost() {
     if (!link.value.trim()) {
-        toast.warning('Введите ссылку', { position: 'top-center'  })
+        toast.warning('Сілтемені енгізіңіз', { position: 'top-center' })
         return
     }
     if (!review.value.trim()) {
-        toast.warning('Введите отзыв', { position: 'top-center'  })
+        toast.warning('Пікір жазыңыз', { position: 'top-center' })
         return
     }
 
@@ -34,11 +34,11 @@ async function createPost() {
             },
             { headers: { 'Authorization': `Bearer ${token.value}` } }
         )
-        toast.success('Пост создан!', { position: 'top-center'  })
-        router.push('/user/me')
+        toast.success('Пост жарияланды!', { position: 'top-center' })
+        router.push('/user')
     } catch (error: any) {
         console.error(error)
-        toast.error(error.response?.data?.message || 'Ошибка при создании поста', { position: 'top-center'  })
+        toast.error(error.response?.data?.message || 'Қате', { position: 'top-center' })
     } finally {
         submitting.value = false
     }
@@ -47,122 +47,72 @@ async function createPost() {
 function goBack() {
     router.back()
 }
+
+function goToLogin() {
+    router.push('/auth/login')
+}
 </script>
 
 <template>
-    <div class="tw-py-6 animate-fadeIn">
-        <!-- Header -->
-        <div class="tw-flex tw-items-center tw-justify-between tw-mb-6">
-            <div class="tw-flex tw-items-center tw-gap-3">
-                <button 
-                    @click="goBack"
-                    class="tw-w-10 tw-h-10 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-text-white/70 hover:tw-bg-white/10 hover:tw-text-white tw-transition-all tw-flex tw-items-center tw-justify-center"
-                >
-                    <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </button>
-                <h1 class="tw-text-xl tw-font-bold tw-text-white">Создать пост</h1>
-            </div>
-            <div class="tw-w-12 tw-h-12 tw-rounded-2xl tw-bg-gradient-to-br tw-from-pink-500 tw-to-pink-600 tw-flex tw-items-center tw-justify-center tw-shadow-lg tw-shadow-pink-500/30">
-                <span class="tw-text-2xl">📝</span>
-            </div>
+    <!-- Not logged in -->
+    <div v-if="!isLoggedIn" class="login-required">
+        <div class="login-card">
+            <div class="login-icon">✏️</div>
+            <h2>Пост жазу</h2>
+            <p>Пост жариялау үшін жүйеге кіріңіз</p>
+            <button class="login-btn" @click="goToLogin">Кіру</button>
         </div>
+    </div>
 
-        <!-- Form -->
-        <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-6">
-            <!-- Preview -->
-            <div 
-                class="tw-mb-6 tw-p-4"
-                style="background: linear-gradient(135deg, #EC4899, #8B5CF6); border-radius: 16px;"
-            >
-                <p class="tw-text-white/70 tw-text-sm tw-mb-2">Предпросмотр поста</p>
-                <p class="tw-font-medium tw-text-white">{{ review || 'Ваш отзыв появится здесь...' }}</p>
-                <p v-if="link" class="tw-text-pink-300 tw-text-sm tw-mt-2 tw-underline">{{ link }}</p>
-            </div>
-
-            <!-- Link Input -->
-            <div class="tw-mb-4">
-                <label class="tw-block tw-text-sm tw-text-white/60 tw-mb-2">Ссылка на товар *</label>
-                <div class="tw-flex tw-items-center tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl focus-within:tw-border-cyan-500 focus-within:tw-shadow-lg focus-within:tw-shadow-cyan-500/10 tw-transition-all">
-                    <div class="tw-px-4 tw-text-white/60">
-                        <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                        </svg>
-                    </div>
-                    <input 
-                        v-model="link"
-                        type="text"
-                        placeholder="https://example.com/product"
-                        class="tw-flex-1 tw-h-[50px] tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50 tw-pr-4"
-                    >
-                </div>
-            </div>
-
-            <!-- Review Input -->
-            <div class="tw-mb-6">
-                <label class="tw-block tw-text-sm tw-text-white/60 tw-mb-2">Ваш отзыв *</label>
-                <div class="tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl focus-within:tw-border-cyan-500 focus-within:tw-shadow-lg focus-within:tw-shadow-cyan-500/10 tw-transition-all">
-                    <textarea 
-                        v-model="review"
-                        placeholder="Расскажите о товаре, качестве, доставке..."
-                        rows="5"
-                        maxlength="500"
-                        class="tw-w-full tw-p-4 tw-bg-transparent tw-border-none tw-outline-none tw-text-white placeholder:tw-text-white/50 tw-resize-none"
-                    ></textarea>
-                </div>
-                <p class="tw-text-right tw-text-xs tw-text-white/60 tw-mt-2">{{ review.length }} / 500</p>
-            </div>
-
-            <!-- Submit Button -->
-            <button 
-                @click="createPost"
-                :disabled="submitting || !link.trim() || !review.trim()"
-                class="tw-w-full tw-h-14 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-font-bold tw-text-lg hover:tw-from-cyan-600 hover:tw-to-cyan-700 disabled:tw-opacity-50 disabled:tw-cursor-not-allowed tw-transition-all tw-shadow-lg tw-shadow-cyan-500/30 tw-flex tw-items-center tw-justify-center tw-gap-2"
-            >
-                <span v-if="!submitting">✨ Опубликовать</span>
-                <div v-else class="tw-flex tw-items-center tw-gap-2">
-                    <div class="tw-w-5 tw-h-5 tw-border-2 tw-border-white/30 tw-border-t-white tw-rounded-full tw-animate-spin"></div>
-                    <span>Создание...</span>
-                </div>
+    <!-- Create post -->
+    <div v-else class="create-page">
+        <div class="create-header">
+            <button @click="goBack" class="cancel-btn">Бас тарту</button>
+            <h1>Жаңа пост</h1>
+            <button @click="createPost" :disabled="submitting || !link.trim() || !review.trim()" class="submit-btn">
+                {{ submitting ? '...' : 'Жариялау' }}
             </button>
         </div>
 
-        <!-- Tips -->
-        <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-5 tw-mt-4">
-            <h3 class="tw-font-bold tw-text-white tw-mb-4 tw-flex tw-items-center tw-gap-2">
-                <span class="tw-w-8 tw-h-8 tw-rounded-lg tw-bg-amber-500/20 tw-flex tw-items-center tw-justify-center">💡</span>
-                Советы для хорошего поста
-            </h3>
-            <ul class="tw-space-y-3">
-                <li class="tw-flex tw-items-start tw-gap-3">
-                    <span class="tw-w-5 tw-h-5 tw-rounded-full tw-bg-cyan-500/20 tw-flex tw-items-center tw-justify-center tw-text-cyan-400 tw-text-xs tw-flex-shrink-0 tw-mt-0.5">✓</span>
-                    <span class="tw-text-white/70 tw-text-sm">Добавьте ссылку на товар</span>
-                </li>
-                <li class="tw-flex tw-items-start tw-gap-3">
-                    <span class="tw-w-5 tw-h-5 tw-rounded-full tw-bg-cyan-500/20 tw-flex tw-items-center tw-justify-center tw-text-cyan-400 tw-text-xs tw-flex-shrink-0 tw-mt-0.5">✓</span>
-                    <span class="tw-text-white/70 tw-text-sm">Опишите качество товара</span>
-                </li>
-                <li class="tw-flex tw-items-start tw-gap-3">
-                    <span class="tw-w-5 tw-h-5 tw-rounded-full tw-bg-cyan-500/20 tw-flex tw-items-center tw-justify-center tw-text-cyan-400 tw-text-xs tw-flex-shrink-0 tw-mt-0.5">✓</span>
-                    <span class="tw-text-white/70 tw-text-sm">Расскажите о скорости доставки</span>
-                </li>
-                <li class="tw-flex tw-items-start tw-gap-3">
-                    <span class="tw-w-5 tw-h-5 tw-rounded-full tw-bg-cyan-500/20 tw-flex tw-items-center tw-justify-center tw-text-cyan-400 tw-text-xs tw-flex-shrink-0 tw-mt-0.5">✓</span>
-                    <span class="tw-text-white/70 tw-text-sm">Поделитесь своим опытом</span>
-                </li>
-            </ul>
+        <div class="create-form">
+            <div class="form-group">
+                <label>Сілтеме</label>
+                <input v-model="link" type="url" placeholder="https://example.com/product" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label>Пікір</label>
+                <textarea v-model="review" placeholder="Осы тауар туралы не ойлайсыз?..." rows="6" class="form-textarea"></textarea>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.animate-fadeIn {
-    animation: fadeIn 0.5s ease-out;
-}
+.login-required { min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-card { text-align: center; padding: 40px 24px; border: 1px solid #333; border-radius: 20px; max-width: 320px; }
+.login-icon { font-size: 64px; margin-bottom: 16px; }
+.login-card h2 { font-size: 24px; font-weight: 700; color: #fff; margin: 0 0 8px; }
+.login-card p { font-size: 15px; color: #777; margin: 0 0 24px; }
+.login-btn { width: 100%; padding: 14px 24px; background: #fff; color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
+.login-btn:hover { background: #eee; }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+.create-page { padding: 0; }
+
+.create-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #222; margin-bottom: 24px; }
+.create-header h1 { font-size: 17px; font-weight: 700; color: #fff; margin: 0; }
+.cancel-btn { background: transparent; border: none; color: #fff; font-size: 15px; cursor: pointer; padding: 8px 0; }
+.submit-btn { padding: 10px 20px; background: #fff; border: none; border-radius: 20px; color: #000; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.submit-btn:hover:not(:disabled) { background: #e5e5e5; }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.create-form { display: flex; flex-direction: column; gap: 24px; }
+
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 14px; font-weight: 600; color: #777; }
+
+.form-input, .form-textarea { width: 100%; padding: 16px; background: #111; border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 16px; outline: none; box-sizing: border-box; transition: border-color 0.2s; }
+.form-input:focus, .form-textarea:focus { border-color: #555; }
+.form-input::placeholder, .form-textarea::placeholder { color: #555; }
+.form-textarea { resize: none; font-family: inherit; line-height: 1.5; }
 </style>

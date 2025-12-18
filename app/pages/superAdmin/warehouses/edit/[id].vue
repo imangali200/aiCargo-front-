@@ -1,11 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
+    layout: 'admin',
     middleware: 'auth'
 })
 
 import type { User } from '../../users.vue'
-import type { Branch } from '~/pages/auth/register.vue'
+interface Branch { id: number; name: string; adminId: number }
 import { useToast } from '~/composables/useToast'
 
 const toast = useToast()

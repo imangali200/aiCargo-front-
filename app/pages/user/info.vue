@@ -16,10 +16,10 @@ async function copyAddress() {
     try {
         await navigator.clipboard.writeText(warehouseAddress)
         copied.value = true
-        toast.success('Адрес скопирован!', { position: 'top-center'  })
+        toast.success('Адрес скопирован!', { position: 'top-center' })
         setTimeout(() => { copied.value = false }, 2000)
     } catch (error) {
-        toast.error('Ошибка при копировании', { position: 'top-center'  })
+        toast.error('Ошибка при копировании', { position: 'top-center' })
     }
 }
 
@@ -29,91 +29,317 @@ function goBack() {
 </script>
 
 <template>
-    <div class="tw-py-6 animate-fadeIn">
+    <div class="threads-container">
         <!-- Header -->
-        <div class="tw-flex tw-items-center tw-gap-4 tw-mb-6">
-            <button @click="goBack" class="tw-w-11 tw-h-11 tw-bg-white/5 tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-white/70 hover:tw-bg-white/10 hover:tw-text-white tw-transition-all">
-                <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <div class="threads-header">
+            <button @click="goBack" class="threads-back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
             </button>
-            <h1 class="tw-flex-1 tw-text-2xl tw-font-bold tw-text-white">Информация</h1>
-            <div class="tw-text-3xl">🏭</div>
+            <h1 class="threads-title">Информация</h1>
+            <div class="threads-header-spacer"></div>
         </div>
 
-        <!-- Main Card -->
-        <div class="tw-relative tw-overflow-hidden tw-bg-gradient-to-br tw-from-emerald-500 tw-via-green-500 tw-to-teal-500 tw-rounded-3xl tw-p-6 tw-mb-6">
-            <div class="tw-absolute tw-w-40 tw-h-40 tw-rounded-full tw-bg-white/10 tw--top-16 tw--right-16"></div>
-            <div class="tw-absolute tw-w-32 tw-h-32 tw-rounded-full tw-bg-white/10 tw--bottom-12 tw--left-12"></div>
-            
-            <div class="tw-relative tw-z-10">
-                <div class="tw-flex tw-items-center tw-gap-4 tw-mb-5">
-                    <div class="tw-w-14 tw-h-14 tw-bg-white/20 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-3xl">🇨🇳</div>
-                    <div>
-                        <p class="tw-text-sm tw-text-white/80">Адрес склада</p>
-                        <h2 class="tw-text-xl tw-font-bold tw-text-white">в Китае</h2>
+        <!-- Main Content -->
+        <div class="threads-content">
+            <!-- Warehouse Card -->
+            <div class="threads-card">
+                <div class="threads-card-header">
+                    <div class="threads-avatar">
+                        <span>🇨🇳</span>
+                    </div>
+                    <div class="threads-card-info">
+                        <span class="threads-card-title">Склад в Китае</span>
+                        <span class="threads-card-subtitle">Адрес для доставки</span>
                     </div>
                 </div>
                 
-                <div class="tw-bg-white/20 tw-rounded-2xl tw-p-5 tw-mb-5">
-                    <p class="tw-text-white tw-text-base tw-leading-relaxed tw-font-medium">{{ warehouseAddress }}</p>
+                <div class="threads-address-box">
+                    <p class="threads-address-text">{{ warehouseAddress }}</p>
                 </div>
 
-                <button @click="copyAddress" :class="['tw-w-full tw-py-4 tw-rounded-2xl tw-font-bold tw-text-lg tw-shadow-lg tw-transition-all tw-flex tw-items-center tw-justify-center tw-gap-3', copied ? 'tw-bg-emerald-500 tw-text-white' : 'tw-bg-white tw-text-gray-800 hover:tw-translate-y-[-2px] hover:tw-shadow-xl']">
-                    <svg v-if="copied" class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    <svg v-else class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                    {{ copied ? 'Скопировано!' : 'Копировать адрес' }}
+                <button @click="copyAddress" class="threads-copy-btn" :class="{ 'copied': copied }">
+                    <svg v-if="!copied" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                    </svg>
+                    <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    <span>{{ copied ? 'Скопировано' : 'Копировать адрес' }}</span>
                 </button>
             </div>
-        </div>
 
-        <!-- Instructions -->
-        <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-6 tw-mb-6">
-            <div class="tw-flex tw-items-center tw-gap-3 tw-mb-5">
-                <span class="tw-text-2xl">📋</span>
-                <h3 class="tw-text-lg tw-font-bold tw-text-white">Как использовать</h3>
-            </div>
-            
-            <div class="tw-space-y-3">
-                <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-rounded-xl tw-bg-gradient-to-r tw-from-orange-500/15 tw-to-orange-500/5">
-                    <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-gradient-to-br tw-from-orange-500 tw-to-orange-600 tw-flex tw-items-center tw-justify-center tw-text-white tw-font-bold tw-shadow-lg tw-shadow-orange-500/30 tw-flex-shrink-0">1</div>
-                    <p class="tw-text-white/90 tw-flex-1">Скопируйте адрес склада</p>
-                    <span class="tw-text-xl">📋</span>
-                </div>
-                
-                <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-rounded-xl tw-bg-gradient-to-r tw-from-blue-500/15 tw-to-blue-500/5">
-                    <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-gradient-to-br tw-from-blue-500 tw-to-blue-600 tw-flex tw-items-center tw-justify-center tw-text-white tw-font-bold tw-shadow-lg tw-shadow-blue-500/30 tw-flex-shrink-0">2</div>
-                    <p class="tw-text-white/90 tw-flex-1">Укажите при заказе в Китае</p>
-                    <span class="tw-text-xl">🛒</span>
-                </div>
-                
-                <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-rounded-xl tw-bg-gradient-to-r tw-from-violet-500/15 tw-to-violet-500/5">
-                    <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-gradient-to-br tw-from-violet-500 tw-to-violet-600 tw-flex tw-items-center tw-justify-center tw-text-white tw-font-bold tw-shadow-lg tw-shadow-violet-500/30 tw-flex-shrink-0">3</div>
-                    <p class="tw-text-white/90 tw-flex-1">Добавьте трек-код</p>
-                    <span class="tw-text-xl">➕</span>
-                </div>
-                
-                <div class="tw-flex tw-items-center tw-gap-4 tw-p-4 tw-rounded-xl tw-bg-gradient-to-r tw-from-emerald-500/15 tw-to-emerald-500/5">
-                    <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-gradient-to-br tw-from-emerald-500 tw-to-emerald-600 tw-flex tw-items-center tw-justify-center tw-text-white tw-font-bold tw-shadow-lg tw-shadow-emerald-500/30 tw-flex-shrink-0">4</div>
-                    <p class="tw-text-white/90 tw-flex-1">Отслеживайте доставку</p>
-                    <span class="tw-text-xl">📦</span>
-                </div>
-            </div>
-        </div>
+            <!-- Divider -->
+            <div class="threads-divider"></div>
 
-        <!-- Close button -->
-        <button @click="goBack" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-3 tw-py-4 tw-bg-red-500/15 tw-border tw-border-red-500/30 tw-rounded-xl tw-text-red-400 tw-font-semibold hover:tw-bg-red-500/25 tw-transition-all">
-            <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            Закрыть
-        </button>
+            <!-- Instructions -->
+            <div class="threads-section">
+                <h2 class="threads-section-title">Как заказать</h2>
+                
+                <div class="threads-steps">
+                    <div class="threads-step">
+                        <div class="threads-step-number">1</div>
+                        <div class="threads-step-content">
+                            <span class="threads-step-title">Скопируйте адрес</span>
+                            <span class="threads-step-desc">Нажмите кнопку выше</span>
+                        </div>
+                    </div>
+
+                    <div class="threads-step">
+                        <div class="threads-step-number">2</div>
+                        <div class="threads-step-content">
+                            <span class="threads-step-title">Закажите товар</span>
+                            <span class="threads-step-desc">Укажите адрес при заказе в Китае</span>
+                        </div>
+                    </div>
+
+                    <div class="threads-step">
+                        <div class="threads-step-number">3</div>
+                        <div class="threads-step-content">
+                            <span class="threads-step-title">Добавьте трек-код</span>
+                            <span class="threads-step-desc">В приложении AI-Cargo</span>
+                        </div>
+                    </div>
+
+                    <div class="threads-step">
+                        <div class="threads-step-number">4</div>
+                        <div class="threads-step-content">
+                            <span class="threads-step-title">Отслеживайте</span>
+                            <span class="threads-step-desc">Мы уведомим о прибытии</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="threads-divider"></div>
+
+            <!-- Back Button -->
+            <button @click="goBack" class="threads-secondary-btn">
+                Назад
+            </button>
+        </div>
     </div>
 </template>
 
 <style scoped>
-.animate-fadeIn {
-    animation: fadeIn 0.5s ease-out;
+.threads-container {
+    min-height: 100vh;
+    background: #000;
+    padding-bottom: 40px;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.threads-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #222;
+    position: sticky;
+    top: 0;
+    background: #000;
+    z-index: 100;
+}
+
+.threads-back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.threads-back-btn:hover {
+    background: #222;
+}
+
+.threads-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.threads-header-spacer {
+    width: 40px;
+}
+
+.threads-content {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.threads-card {
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.threads-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.threads-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.threads-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.threads-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.threads-card-subtitle {
+    font-size: 14px;
+    color: #777;
+}
+
+.threads-address-box {
+    background: #111;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.threads-address-text {
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.5;
+    margin: 0;
+    word-break: break-all;
+}
+
+.threads-copy-btn {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.threads-copy-btn:hover {
+    background: #e5e5e5;
+}
+
+.threads-copy-btn.copied {
+    background: #222;
+    color: #fff;
+}
+
+.threads-divider {
+    height: 1px;
+    background: #222;
+    margin: 24px 0;
+}
+
+.threads-section {
+    padding: 0;
+}
+
+.threads-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 20px 0;
+}
+
+.threads-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.threads-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.threads-step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #222;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.threads-step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 4px;
+}
+
+.threads-step-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.threads-step-desc {
+    font-size: 14px;
+    color: #777;
+}
+
+.threads-secondary-btn {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.threads-secondary-btn:hover {
+    background: #111;
+    border-color: #444;
 }
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
+    layout: 'admin',
     middleware: 'auth'
 })
 
@@ -120,7 +120,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- Loading -->
+        <!-- Loading -->ц
         <div v-if="loading" class="tw-text-center tw-py-16">
             <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
             <p class="tw-mt-4 tw-text-white/60">Жүктелуде...</p>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
-    middleware: ['auth', 'user-active']
+    layout: 'default'
 })
 
 import { useToast } from '~/composables/useToast'
@@ -12,15 +11,6 @@ interface Post {
     review: string
     likesCount: number
     createAt: string
-}
-
-type LikedPost = Post
-
-interface SavedProduct {
-    id: number
-    productId: string
-    description: string
-    createdAt: string
 }
 
 interface Profile {
@@ -34,8 +24,7 @@ interface Profile {
     role: string
     createAt: string
     posts: Post[]
-    postLikes: LikedPost[]
-    saved: SavedProduct[] | null
+    postLikes: Post[]
 }
 
 const { $axios } = useNuxtApp()
@@ -45,7 +34,8 @@ const router = useRouter()
 
 const profile = ref<Profile | null>(null)
 const loading = ref(false)
-const activeTab = ref<'posts' | 'likes' | 'saved'>('posts')
+const activeTab = ref<'posts' | 'likes'>('posts')
+const isLoggedIn = computed(() => !!token.value)
 
 async function getProfile() {
     loading.value = true
@@ -54,232 +44,161 @@ async function getProfile() {
             headers: { 'Authorization': `Bearer ${token.value}` }
         })
         profile.value = response.data
-    } catch (error: any) {
-        console.error(error)
-        toast.error('Ошибка при загрузке профиля', { position: 'top-center'  })
+    } catch {
+        profile.value = null
     } finally {
         loading.value = false
     }
 }
 
-const posts = computed(() => profile.value?.posts || [])
-const likedPosts = computed(() => profile.value?.postLikes || [])
-const savedProducts = computed(() => profile.value?.saved || [])
-
-function goBack() {
-    router.back()
+async function logout() {
+    token.value = null
+    router.push('/auth/login')
 }
 
 function formatDate(date: string) {
-    return new Date(date).toLocaleDateString('ru-RU', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-    })
+    const now = new Date()
+    const postDate = new Date(date)
+    const diff = Math.floor((now.getTime() - postDate.getTime()) / 1000)
+    
+    if (diff < 60) return 'қазір'
+    if (diff < 3600) return Math.floor(diff / 60) + ' мин'
+    if (diff < 86400) return Math.floor(diff / 3600) + ' сағ'
+    if (diff < 604800) return Math.floor(diff / 86400) + ' күн'
+    return postDate.toLocaleDateString('ru-RU')
+}
+
+function goToLogin() {
+    router.push('/auth/login')
 }
 
 onMounted(() => {
-    getProfile()
+    if (token.value) {
+        getProfile()
+    }
 })
 </script>
 
 <template>
-    <div class="tw-py-6 animate-fadeIn">
-        <!-- Loading -->
-        <div v-if="loading" class="tw-text-center tw-py-16">
-            <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-            <p class="tw-mt-4 tw-text-white/60">Загрузка...</p>
+    <!-- Not logged in -->
+    <div v-if="!isLoggedIn" class="login-required">
+        <div class="login-card">
+            <div class="login-icon">👤</div>
+            <h2>Профиль</h2>
+            <p>Профильді көру үшін жүйеге кіріңіз</p>
+            <button class="login-btn" @click="goToLogin">Кіру</button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div v-else-if="loading" class="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Profile -->
+    <div v-else-if="profile" class="profile-page">
+        <div class="profile-header">
+            <div class="profile-info">
+                <h1 class="profile-name">{{ profile.name }} {{ profile.surname }}</h1>
+                <p class="profile-username">@{{ profile.code }}</p>
+            </div>
+            <div class="profile-avatar">{{ profile.name.charAt(0).toUpperCase() }}</div>
         </div>
 
-        <div v-else-if="profile">
-            <!-- Profile Header -->
-            <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-6 tw-mb-6">
-                <div class="tw-flex tw-items-start tw-gap-5">
-                    <!-- Avatar -->
-                    <div class="tw-w-20 tw-h-20 md:tw-w-28 md:tw-h-28 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-3xl md:tw-text-4xl tw-font-bold tw-text-white tw-flex-shrink-0 tw-bg-gradient-to-br tw-from-cyan-500 tw-to-cyan-600 tw-shadow-lg tw-shadow-cyan-500/30">
-                        {{ profile.name?.charAt(0).toUpperCase() || 'U' }}
-                    </div>
+        <div class="profile-stats">
+            <span class="stat">{{ profile.posts?.length || 0 }} пост</span>
+        </div>
 
-                    <!-- Info -->
-                    <div class="tw-flex-1">
-                        <h1 class="tw-text-xl md:tw-text-2xl tw-font-bold tw-text-white tw-mb-3">
-                            {{ profile.name }} {{ profile.surname }}
-                        </h1>
+        <div class="profile-actions">
+            <button class="action-btn logout" @click="logout">Шығу</button>
+            <a :href="'tel:' + profile.phoneNumber" class="action-btn phone">📞 {{ profile.phoneNumber }}</a>
+        </div>
 
-                        <!-- Buttons -->
-                        <div class="tw-flex tw-gap-2 tw-mb-4 tw-flex-wrap">
-                            <button @click="goBack" class="tw-px-4 tw-py-2 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-text-white/70 tw-font-medium tw-text-sm hover:tw-bg-white/10 tw-transition-all tw-flex tw-items-center tw-gap-2">
-                                <span>←</span> Назад
-                            </button>
-                        </div>
+        <div class="profile-tabs">
+            <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Посттар</button>
+            <button :class="{ active: activeTab === 'likes' }" @click="activeTab = 'likes'">Ұнатқандар</button>
+        </div>
 
-                        <!-- Stats -->
-                        <div class="tw-flex tw-gap-5 tw-mb-4 tw-flex-wrap">
-                            <div class="tw-flex tw-items-center tw-gap-1.5">
-                                <span class="tw-font-bold tw-text-white">{{ posts.length }}</span>
-                                <span class="tw-text-white/60 tw-text-sm">Постов</span>
-                            </div>
-                            <div class="tw-flex tw-items-center tw-gap-1.5">
-                                <span class="tw-font-bold tw-text-white">{{ likedPosts.length }}</span>
-                                <span class="tw-text-white/60 tw-text-sm">Лайков</span>
-                            </div>
-                            <div class="tw-flex tw-items-center tw-gap-1.5">
-                                <span class="tw-font-bold tw-text-white">{{ savedProducts.length }}</span>
-                                <span class="tw-text-white/60 tw-text-sm">Сохранённых</span>
-                            </div>
-                        </div>
-
-                        <!-- Contact Info -->
-                        <div class="tw-text-white/60 tw-text-sm tw-space-y-1">
-                            <p>📱 {{ profile.phoneNumber }}</p>
-                            <p>📍 {{ profile.branch }} • Код: {{ profile.code }}</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Posts Tab -->
+        <div v-if="activeTab === 'posts'" class="tab-content">
+            <div v-if="!profile.posts?.length" class="empty-tab">
+                <p>Посттар жоқ</p>
             </div>
-
-            <!-- Tabs -->
-            <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-overflow-hidden">
-                <div class="tw-flex tw-border-b tw-border-white/10 tw-px-2 tw-pt-2">
-                    <button 
-                        @click="activeTab = 'posts'"
-                        class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
-                        :class="activeTab === 'posts' ? 'tw-border-cyan-500 tw-text-cyan-400' : 'tw-border-transparent tw-text-white/60 hover:tw-text-white/70'"
-                    >
-                        <span class="tw-text-lg">📝</span> Посты
-                    </button>
-                    <button 
-                        @click="activeTab = 'likes'"
-                        class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
-                        :class="activeTab === 'likes' ? 'tw-border-pink-500 tw-text-pink-400' : 'tw-border-transparent tw-text-white/60 hover:tw-text-white/70'"
-                    >
-                        <span class="tw-text-lg">❤️</span> Лайки
-                    </button>
-                    <button 
-                        @click="activeTab = 'saved'"
-                        class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2"
-                        :class="activeTab === 'saved' ? 'tw-border-violet-500 tw-text-violet-400' : 'tw-border-transparent tw-text-white/60 hover:tw-text-white/70'"
-                    >
-                        <span class="tw-text-lg">🔖</span> Сохранённые
-                    </button>
-                </div>
-
-                <!-- Content -->
-                <div class="tw-min-h-[300px]">
-                    <!-- Posts Tab -->
-                    <div v-if="activeTab === 'posts'">
-                        <div v-if="!posts.length" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16">
-                            <div class="tw-w-20 tw-h-20 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mb-4">
-                                <span class="tw-text-4xl">📝</span>
-                            </div>
-                            <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Создайте свой первый пост</h3>
-                            <p class="tw-text-white/60 tw-text-sm">Здесь появятся ваши посты</p>
-                        </div>
-                        
-                        <div v-else class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-4 tw-p-4">
-                            <div v-for="post in posts" :key="post.id" class="tw-bg-white/[0.03] tw-border tw-border-white/10 tw-rounded-xl tw-overflow-hidden hover:tw-border-cyan-500/30 tw-transition-all tw-cursor-pointer">
-                                <div class="tw-p-4 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-text-white">
-                                    <div class="tw-flex tw-items-center tw-gap-2 tw-mb-1">
-                                        <span class="tw-text-lg">📝</span>
-                                        <span class="tw-font-bold tw-text-sm">Пост #{{ post.id }}</span>
-                                    </div>
-                                    <p class="tw-text-white/70 tw-text-xs">{{ formatDate(post.createAt) }}</p>
-                                </div>
-                                <div class="tw-p-4">
-                                    <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Ссылка:</p>
-                                        <a :href="post.link" target="_blank" class="tw-text-cyan-400 tw-text-sm tw-underline tw-break-all tw-line-clamp-2">{{ post.link }}</a>
-                                    </div>
-                                    <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Отзыв:</p>
-                                        <p class="tw-text-white/80 tw-text-sm tw-line-clamp-3">{{ post.review }}</p>
-                                    </div>
-                                    <div class="tw-flex tw-items-center tw-gap-2 tw-pt-3 tw-border-t tw-border-white/10">
-                                        <span>❤️</span>
-                                        <span class="tw-font-bold tw-text-white">{{ post.likesCount }}</span>
-                                        <span class="tw-text-white/60 tw-text-sm">лайков</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Likes Tab -->
-                    <div v-if="activeTab === 'likes'">
-                        <div v-if="!likedPosts.length" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16">
-                            <div class="tw-w-20 tw-h-20 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mb-4">
-                                <span class="tw-text-4xl">❤️</span>
-                            </div>
-                            <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Нет лайкнутых постов</h3>
-                            <p class="tw-text-white/60 tw-text-sm">Здесь появятся посты которые вы лайкнули</p>
-                        </div>
-                        
-                        <div v-else class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-4 tw-p-4">
-                            <div v-for="post in likedPosts" :key="post.id" class="tw-bg-white/[0.03] tw-border tw-border-white/10 tw-rounded-xl tw-overflow-hidden hover:tw-border-pink-500/30 tw-transition-all tw-cursor-pointer">
-                                <div class="tw-p-4 tw-bg-gradient-to-r tw-from-pink-500 tw-to-pink-600 tw-text-white">
-                                    <div class="tw-flex tw-items-center tw-gap-2 tw-mb-1">
-                                        <span class="tw-text-lg">❤️</span>
-                                        <span class="tw-font-bold tw-text-sm">Пост #{{ post.id }}</span>
-                                    </div>
-                                    <p class="tw-text-white/70 tw-text-xs">{{ formatDate(post.createAt) }}</p>
-                                </div>
-                                <div class="tw-p-4">
-                                    <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Ссылка:</p>
-                                        <a :href="post.link" target="_blank" class="tw-text-pink-400 tw-text-sm tw-underline tw-break-all tw-line-clamp-2">{{ post.link }}</a>
-                                    </div>
-                                    <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Отзыв:</p>
-                                        <p class="tw-text-white/80 tw-text-sm tw-line-clamp-3">{{ post.review }}</p>
-                                    </div>
-                                    <div class="tw-flex tw-items-center tw-gap-2 tw-pt-3 tw-border-t tw-border-white/10">
-                                        <span>❤️</span>
-                                        <span class="tw-font-bold tw-text-white">{{ post.likesCount }}</span>
-                                        <span class="tw-text-white/60 tw-text-sm">лайков</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Saved Tab -->
-                    <div v-if="activeTab === 'saved'">
-                        <div v-if="!savedProducts.length" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16">
-                            <div class="tw-w-20 tw-h-20 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mb-4">
-                                <span class="tw-text-4xl">🔖</span>
-                            </div>
-                            <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Нет сохранённых товаров</h3>
-                            <p class="tw-text-white/60 tw-text-sm">Сохранённые товары появятся здесь</p>
-                        </div>
-                        
-                        <div v-else class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-3 lg:tw-grid-cols-4 tw-gap-3 tw-p-4">
-                            <div v-for="product in savedProducts" :key="product.id" class="tw-bg-gradient-to-br tw-from-violet-500/10 tw-to-violet-500/20 tw-border tw-border-violet-500/20 tw-rounded-xl tw-p-4 tw-text-center hover:tw-border-violet-500/40 tw-transition-all tw-cursor-pointer">
-                                <span class="tw-text-3xl tw-mb-2 tw-block">📦</span>
-                                <p class="tw-font-bold tw-text-white tw-text-sm">{{ product.productId }}</p>
-                                <p class="tw-text-white/60 tw-text-xs tw-line-clamp-2 tw-mt-1">{{ product.description || '' }}</p>
-                            </div>
-                        </div>
+            <div v-else class="posts-list">
+                <div v-for="post in profile.posts" :key="post.id" class="post-card">
+                    <p class="post-text">{{ post.review }}</p>
+                    <a v-if="post.link" :href="post.link.startsWith('http') ? post.link : 'https://' + post.link" target="_blank" class="post-link">🔗 {{ post.link }}</a>
+                    <div class="post-meta">
+                        <span>♡ {{ post.likesCount }}</span>
+                        <span>{{ formatDate(post.createAt) }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Error State -->
-        <div v-else class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-20">
-            <div class="tw-text-5xl tw-mb-4">😕</div>
-            <p class="tw-text-white/60 tw-mb-4">Профиль не найден</p>
-            <button @click="goBack" class="tw-px-6 tw-py-3 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-font-semibold hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all">
-                ← Назад
-            </button>
+        <!-- Likes Tab -->
+        <div v-if="activeTab === 'likes'" class="tab-content">
+            <div v-if="!profile.postLikes?.length" class="empty-tab">
+                <p>Ұнатылған посттар жоқ</p>
+            </div>
+            <div v-else class="posts-list">
+                <div v-for="post in profile.postLikes" :key="post.id" class="post-card">
+                    <p class="post-text">{{ post.review }}</p>
+                    <a v-if="post.link" :href="post.link.startsWith('http') ? post.link : 'https://' + post.link" target="_blank" class="post-link">🔗 {{ post.link }}</a>
+                    <div class="post-meta">
+                        <span>♡ {{ post.likesCount }}</span>
+                        <span>{{ formatDate(post.createAt) }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.animate-fadeIn {
-    animation: fadeIn 0.5s ease-out;
-}
+.login-required { min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-card { text-align: center; padding: 40px 24px; border: 1px solid #333; border-radius: 20px; max-width: 320px; }
+.login-icon { font-size: 64px; margin-bottom: 16px; }
+.login-card h2 { font-size: 24px; font-weight: 700; color: #fff; margin: 0 0 8px; }
+.login-card p { font-size: 15px; color: #777; margin: 0 0 24px; }
+.login-btn { width: 100%; padding: 14px 24px; background: #fff; color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
+.login-btn:hover { background: #eee; }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+.loading-screen { min-height: 60vh; display: flex; align-items: center; justify-content: center; }
+.spinner { width: 32px; height: 32px; border: 3px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.profile-page { padding: 20px 0; }
+
+.profile-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.profile-info { flex: 1; }
+.profile-name { font-size: 22px; font-weight: 700; color: #fff; margin: 0 0 4px; }
+.profile-username { font-size: 15px; color: #777; margin: 0; }
+.profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #fff; }
+
+.profile-stats { margin-bottom: 20px; }
+.stat { font-size: 15px; color: #fff; }
+
+.profile-actions { display: flex; gap: 12px; margin-bottom: 24px; }
+.action-btn { flex: 1; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; transition: all 0.2s; }
+.action-btn.logout { background: transparent; border: 1px solid #333; color: #fff; }
+.action-btn.logout:hover { background: #222; }
+.action-btn.phone { background: #222; border: none; color: #fff; }
+.action-btn.phone:hover { background: #333; }
+
+.profile-tabs { display: flex; border-bottom: 1px solid #222; margin-bottom: 20px; }
+.profile-tabs button { flex: 1; padding: 14px 0; background: transparent; border: none; color: #777; font-size: 15px; font-weight: 600; cursor: pointer; position: relative; transition: color 0.2s; }
+.profile-tabs button.active { color: #fff; }
+.profile-tabs button.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #fff; }
+
+.tab-content { min-height: 200px; }
+.empty-tab { text-align: center; padding: 40px 0; }
+.empty-tab p { color: #555; font-size: 15px; margin: 0; }
+
+.posts-list { display: flex; flex-direction: column; gap: 16px; }
+.post-card { padding: 16px; border: 1px solid #222; border-radius: 16px; }
+.post-text { font-size: 15px; color: #fff; line-height: 1.5; margin: 0 0 8px; }
+.post-link { display: inline-block; font-size: 14px; color: #1d9bf0; text-decoration: none; margin-bottom: 8px; }
+.post-link:hover { text-decoration: underline; }
+.post-meta { display: flex; gap: 16px; font-size: 14px; color: #555; }
 </style>

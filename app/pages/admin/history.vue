@@ -154,6 +154,11 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+    layout: 'warehouse',
+    middleware: 'auth'
+})
+
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from '~/composables/useToast'
 

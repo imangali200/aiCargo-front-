@@ -55,10 +55,8 @@ function goBack() {
     router.back()
 }
 
-// Computed for posts
 const posts = computed(() => profile.value?.posts || [])
 
-// Watch for route changes
 watch(userId, (newId) => {
     if (newId) {
         getUserProfile()
@@ -67,119 +65,57 @@ watch(userId, (newId) => {
 </script>
 
 <template>
-    <div class="tw-py-6 animate-fadeIn">
+    <div class="profile-page">
         <!-- Loading -->
-        <div v-if="loading" class="tw-text-center tw-py-16">
-            <div class="tw-w-12 tw-h-12 tw-border-4 tw-border-cyan-500/20 tw-border-t-cyan-500 tw-rounded-full tw-animate-spin tw-mx-auto"></div>
-            <p class="tw-mt-4 tw-text-white/60">Загрузка...</p>
+        <div v-if="loading" class="loading">
+            <div class="spinner"></div>
         </div>
 
-        <div v-else-if="profile">
+        <div v-else-if="profile" class="profile-content">
+            
             <!-- Profile Header -->
-            <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-p-6 tw-mb-6">
-                <div class="tw-flex tw-items-start tw-gap-5">
-                    <!-- Avatar -->
-                    <div class="tw-w-20 tw-h-20 md:tw-w-28 md:tw-h-28 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-3xl md:tw-text-4xl tw-font-bold tw-text-white tw-flex-shrink-0 tw-bg-gradient-to-br tw-from-cyan-500 tw-to-cyan-600 tw-shadow-lg tw-shadow-cyan-500/30">
-                        {{ profile.name?.charAt(0).toUpperCase() || 'U' }}
-                    </div>
-
-                    <!-- Info -->
-                    <div class="tw-flex-1">
-                        <h1 class="tw-text-xl md:tw-text-2xl tw-font-bold tw-text-white tw-mb-3">
-                            {{ profile.name }} {{ profile.surname }}
-                        </h1>
-
-                        <!-- Username -->
-                        <p class="tw-text-white/60 tw-text-sm tw-mb-3">
-                            @{{ profile.name?.toLowerCase() || 'user' }}
-                        </p>
-
-                        <!-- Buttons -->
-                        <div class="tw-flex tw-gap-2 tw-mb-4 tw-flex-wrap">
-                            <button @click="goBack" class="tw-px-4 tw-py-2 tw-bg-white/5 tw-border tw-border-white/10 tw-rounded-xl tw-text-white/70 tw-font-medium tw-text-sm hover:tw-bg-white/10 tw-transition-all tw-flex tw-items-center tw-gap-2">
-                                <span>←</span> Назад
-                            </button>
-                        </div>
-
-                        <!-- Stats -->
-                        <div class="tw-flex tw-gap-5 tw-flex-wrap">
-                            <div class="tw-flex tw-items-center tw-gap-1.5">
-                                <span class="tw-font-bold tw-text-white">{{ posts.length }}</span>
-                                <span class="tw-text-white/60 tw-text-sm">Постов</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="profile-header">
+                <div class="profile-left">
+                    <h1 class="profile-name">{{ profile.name }}</h1>
+                    <p class="profile-username">{{ profile.name?.toLowerCase() }}_{{ profile.surname?.toLowerCase() }}</p>
+                </div>
+                <div class="profile-avatar">
+                    {{ profile.name?.charAt(0).toUpperCase() || 'U' }}
                 </div>
             </div>
+
+            <!-- Stats Row -->
+            <div class="profile-stats">
+                <span class="stat">{{ posts.length }} постов</span>
+            </div>
+
+            <!-- Action Button -->
+            <button @click="goBack" class="back-button">← Назад</button>
 
             <!-- Tabs -->
-            <div class="tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-overflow-hidden tw-mb-6">
-                <div class="tw-flex tw-border-b tw-border-white/10 tw-px-2 tw-pt-2">
-                    <button 
-                        class="tw-flex-1 tw-py-4 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-font-medium tw-text-sm tw-transition-all tw-border-b-2 tw-border-cyan-500 tw-text-cyan-400"
-                    >
-                        <span class="tw-text-lg">📝</span> Посты
-                    </button>
-                </div>
+            <div class="profile-tabs">
+                <button class="tab active">Посты</button>
+            </div>
 
-                <!-- Content -->
-                <div class="tw-min-h-[300px]">
-                    <!-- Posts Tab -->
-                    <div>
-                        <!-- Empty state -->
-                        <div v-if="!posts.length" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16">
-                            <div class="tw-w-20 tw-h-20 tw-rounded-2xl tw-bg-white/5 tw-flex tw-items-center tw-justify-center tw-mb-4">
-                                <span class="tw-text-4xl">📝</span>
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <div v-if="!posts.length" class="empty-state">
+                    <p>Нет постов</p>
+                </div>
+                <div v-else class="posts-list">
+                    <div v-for="post in posts" :key="post.id" class="post-item">
+                        <div class="post-avatar">{{ profile.name?.charAt(0).toUpperCase() }}</div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-author">{{ profile.name }}</span>
+                                <span class="post-time">{{ formatDate(post.createAt) }}</span>
                             </div>
-                            <h3 class="tw-text-xl tw-font-bold tw-text-white tw-mb-2">Нет постов</h3>
-                            <p class="tw-text-white/60 tw-text-sm">У пользователя пока нет постов</p>
-                        </div>
-                        
-                        <!-- Posts grid -->
-                        <div v-else class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-4 tw-p-4">
-                            <div 
-                                v-for="post in posts" 
-                                :key="post.id"
-                                class="tw-bg-white/[0.03] tw-border tw-border-white/10 tw-rounded-xl tw-overflow-hidden hover:tw-border-cyan-500/30 tw-transition-all tw-cursor-pointer"
-                            >
-                                <!-- Post Header -->
-                                <div class="tw-p-4 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-text-white">
-                                    <div class="tw-flex tw-items-center tw-gap-2 tw-mb-1">
-                                        <span class="tw-text-lg">📝</span>
-                                        <span class="tw-font-bold tw-text-sm">Пост #{{ post.id }}</span>
-                                    </div>
-                                    <p class="tw-text-white/70 tw-text-xs">
-                                        {{ formatDate(post.createAt) }}
-                                    </p>
-                                </div>
-                                
-                                <!-- Post Content -->
-                                <div class="tw-p-4">
-                                    <!-- Link -->
-                                    <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Ссылка:</p>
-                                        <a 
-                                            :href="post.link.startsWith('http') ? post.link : `https://${post.link}`" 
-                                            target="_blank"
-                                            class="tw-text-cyan-400 tw-text-sm tw-underline tw-break-all tw-line-clamp-2"
-                                        >
-                                            {{ post.link }}
-                                        </a>
-                                    </div>
-                                    
-                                    <!-- Review -->
-                                    <div class="tw-mb-3">
-                                        <p class="tw-text-xs tw-text-white/60 tw-mb-1">Отзыв:</p>
-                                        <p class="tw-text-white/80 tw-text-sm tw-line-clamp-3">{{ post.review }}</p>
-                                    </div>
-                                    
-                                    <!-- Likes -->
-                                    <div class="tw-flex tw-items-center tw-gap-2 tw-pt-3 tw-border-t tw-border-white/10">
-                                        <span>❤️</span>
-                                        <span class="tw-font-bold tw-text-white">{{ post.likesCount }}</span>
-                                        <span class="tw-text-white/60 tw-text-sm">лайков</span>
-                                    </div>
-                                </div>
+                            <p class="post-text">{{ post.review }}</p>
+                            <a v-if="post.link" :href="post.link.startsWith('http') ? post.link : 'https://' + post.link" target="_blank" class="post-link">
+                                🔗 {{ post.link }}
+                            </a>
+                            <div class="post-actions">
+                                <span class="post-action">❤️ {{ post.likesCount }}</span>
                             </div>
                         </div>
                     </div>
@@ -187,27 +123,65 @@ watch(userId, (newId) => {
             </div>
         </div>
 
-        <!-- Error State -->
-        <div v-else class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-20">
-            <div class="tw-text-5xl tw-mb-4">😕</div>
-            <p class="tw-text-white/60 tw-mb-4">Профиль не найден</p>
-            <button 
-                @click="goBack"
-                class="tw-px-6 tw-py-3 tw-bg-gradient-to-r tw-from-cyan-500 tw-to-cyan-600 tw-rounded-xl tw-text-white tw-font-semibold hover:tw-shadow-lg hover:tw-shadow-cyan-500/30 tw-transition-all"
-            >
-                ← Назад
-            </button>
+        <!-- Error -->
+        <div v-else class="empty-state">
+            <span class="empty-icon">😕</span>
+            <h3>Профиль не найден</h3>
+            <button @click="goBack" class="btn">← Назад</button>
         </div>
     </div>
 </template>
 
 <style scoped>
-.animate-fadeIn {
-    animation: fadeIn 0.5s ease-out;
-}
+.profile-page { padding: 8px 0; }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+.loading { display: flex; justify-content: center; padding: 60px 0; }
+.spinner { width: 24px; height: 24px; border: 2px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.profile-content { }
+
+/* Header */
+.profile-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.profile-left { flex: 1; }
+.profile-name { font-size: 26px; font-weight: 700; color: #fff; margin: 0 0 2px; }
+.profile-username { font-size: 15px; color: #777; margin: 0; }
+
+.profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 600; color: #fff; flex-shrink: 0; }
+
+/* Stats */
+.profile-stats { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+.stat { font-size: 15px; color: #888; }
+
+/* Back Button */
+.back-button { width: 100%; padding: 14px; background: transparent; border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 24px; }
+.back-button:hover { background: #111; }
+
+/* Tabs */
+.profile-tabs { display: flex; border-bottom: 1px solid #222; margin-bottom: 0; }
+.tab { flex: 1; padding: 16px 0; background: transparent; border: none; border-bottom: 1px solid transparent; color: #666; font-size: 15px; font-weight: 600; cursor: pointer; }
+.tab.active { color: #fff; border-bottom-color: #fff; }
+
+/* Tab Content */
+.tab-content { min-height: 200px; }
+
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-icon { font-size: 48px; display: block; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 8px; }
+.empty-state p { font-size: 15px; color: #555; margin: 0; }
+.btn { padding: 12px 24px; background: #fff; border: none; border-radius: 20px; color: #000; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+
+/* Posts List */
+.posts-list { }
+.post-item { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid #222; }
+.post-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #fff; flex-shrink: 0; }
+.post-content { flex: 1; }
+.post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.post-author { font-size: 15px; font-weight: 600; color: #fff; }
+.post-time { font-size: 14px; color: #555; }
+.post-text { font-size: 15px; color: #fff; line-height: 1.4; margin: 0 0 8px; }
+.post-link { display: inline-block; font-size: 14px; color: #1d9bf0; text-decoration: none; margin-bottom: 12px; }
+.post-link:hover { text-decoration: underline; }
+.post-actions { display: flex; gap: 20px; margin-top: 8px; }
+.post-action { font-size: 14px; color: #f91880; }
 </style>

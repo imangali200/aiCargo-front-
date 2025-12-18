@@ -1,11 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
+    layout: 'admin',
     middleware: 'auth'
 })
 
 import { useToast } from '~/composables/useToast';
-import type { Branch } from '~/pages/auth/register.vue';
+interface Branch { id: number; name: string; branchName?: string; adminId: number; responsibleName?: string }
 
 const token = useCookie('token')
 const { $axios } = useNuxtApp()

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'default',
+    layout: 'admin',
     middleware: 'auth'
 })
 import type { User } from '../users.vue'
