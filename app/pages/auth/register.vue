@@ -135,7 +135,9 @@ async function postRegister() {
 
         if (response.data.accessToken) {
             const token = useCookie("token");
+            const refreshToken = useCookie("refreshToken");
             token.value = response.data.accessToken;
+            refreshToken.value = response.data.refreshToken;
             return navigateTo("/user/me");
         }
     } catch (error) {

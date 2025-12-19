@@ -59,8 +59,11 @@ async function getProfile() {
     }
 }
 
+const refreshToken = useCookie('refreshToken')
+
 async function logout() {
     token.value = null
+    refreshToken.value = null
     router.push('/auth/login')
 }
 

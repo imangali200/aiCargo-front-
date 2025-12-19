@@ -166,8 +166,11 @@ function goToLogin() {
     router.push('/auth/login')
 }
 
+const refreshToken = useCookie('refreshToken')
+
 function logout() {
     token.value = null
+    refreshToken.value = null
     router.push('/auth/login')
 }
 

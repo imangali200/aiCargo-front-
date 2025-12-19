@@ -25,10 +25,12 @@
 
 <script setup lang="ts">
 const token = useCookie('token')
+const refreshToken = useCookie('refreshToken')
 const router = useRouter()
 
 function logout() {
     token.value = null
+    refreshToken.value = null
     router.push('/auth/login')
 }
 </script>

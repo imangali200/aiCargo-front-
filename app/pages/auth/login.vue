@@ -93,7 +93,9 @@ async function postLogin() {
 
         if (res.data.accessToken) {
             const token = useCookie("token");
+            const refreshToken = useCookie("refreshToken");
             token.value = res.data.accessToken;
+            refreshToken.value = res.data.refreshToken;
             return navigateTo("/");
         } else {
             if (res.data.response?.statusCode === 404) {
