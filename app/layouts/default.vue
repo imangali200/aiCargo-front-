@@ -16,7 +16,7 @@ import BottomNav from '~/components/BottomNav.vue'
 </template>
 
 <style scoped>
-.threads-app { min-height: 100vh; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.threads-app { min-height: 100vh; width: 100%; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 .threads-main { flex: 1; padding-bottom: 70px; }
 .threads-container { max-width: 620px; margin: 0 auto; padding: 0 16px; }
 </style>

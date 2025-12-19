@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   modules: ["@nuxtjs/tailwindcss", "@vite-pwa/nuxt"],
   compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   plugins: [
     '~/plugins/toast.client.ts'
   ],
@@ -37,10 +37,10 @@ export default defineNuxtConfig({
       globPatterns: ['**/*.{js,css,html,png,svg,ico}']
     },
     client: {
-      installPrompt: true
+      installPrompt: false
     },
     devOptions: {
-      enabled: true,
+      enabled: false,
       type: 'module'
     }
   },
