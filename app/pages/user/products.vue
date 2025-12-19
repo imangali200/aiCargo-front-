@@ -15,13 +15,22 @@ interface Product {
     given_to_client: string | null
 }
 
+interface Profile {
+    id: number
+    code: string
+    isActive: boolean
+}
+
+const WHATSAPP_NUMBER = "77083791496"
+
 const { $axios } = useNuxtApp()
 const token = useCookie('token')
 const toast = useToast()
 const router = useRouter()
 
+const profile = ref<Profile | null>(null)
 const allProducts = ref<Product[]>([])
-const loading = ref(false)
+const loading = ref(true)
 const searchQuery = ref('')
 const isSearchMode = ref(false)
 const activeTab = ref<'active' | 'archive'>('active')
@@ -36,9 +45,25 @@ const activeProducts = computed(() => allProducts.value.filter(p => !p.aicargo))
 const archivedProducts = computed(() => allProducts.value.filter(p => p.aicargo))
 const products = computed(() => activeTab.value === 'active' ? activeProducts.value : archivedProducts.value)
 
+const whatsappLink = computed(() => {
+    if (!profile.value) return '#'
+    const message = `Здравствуйте. Прошу вас зарегистрировать меня на сайте Ai-MARKET. Я клиент Ai-CARGO. Мой индивидуальный код: ${profile.value.code}`
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
+})
+
+async function getProfile() {
+    try {
+        const response = await $axios.get('profile', {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        profile.value = response.data
+    } catch {
+        profile.value = null
+    }
+}
+
 async function getProducts() {
     if (!token.value) return
-    loading.value = true
     try {
         const response = await $axios.get('products/my', {
             headers: { 'Authorization': `Bearer ${token.value}` }
@@ -46,8 +71,6 @@ async function getProducts() {
         allProducts.value = response.data
     } catch {
         allProducts.value = []
-    } finally {
-        loading.value = false
     }
 }
 
@@ -143,20 +166,57 @@ function goToLogin() {
     router.push('/auth/login')
 }
 
-onMounted(() => {
+function logout() {
+    token.value = null
+    router.push('/auth/login')
+}
+
+onMounted(async () => {
     if (token.value) {
-        getProducts()
+        await getProfile()
+        if (profile.value?.isActive) {
+            await getProducts()
+        }
     }
+    loading.value = false
 })
 </script>
 
 <template>
-    <div v-if="!isLoggedIn" class="login-required">
+    <!-- Loading -->
+    <div v-if="loading" class="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
+    <div v-else-if="!isLoggedIn" class="login-required">
         <div class="login-card">
             <div class="login-icon">📦</div>
             <h2>Мои товары</h2>
             <p>Войдите, чтобы просмотреть товары</p>
             <button class="login-btn" @click="goToLogin">Войти</button>
+        </div>
+    </div>
+
+    <!-- Если isActive = false -->
+    <div v-else-if="profile && !profile.isActive" class="activation-page">
+        <div class="activation-card">
+            <div class="activation-icon">⏳</div>
+            <h2>Аккаунт не активирован</h2>
+            <p>Ваш аккаунт ожидает активации администратором. Отправьте заявку через WhatsApp для быстрой активации.</p>
+            
+            <div class="user-code">
+                <span class="code-label">Ваш код:</span>
+                <span class="code-value">{{ profile.code }}</span>
+            </div>
+
+            <a :href="whatsappLink" target="_blank" class="whatsapp-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Отправить в WhatsApp
+            </a>
+
+            <p class="hint-text">После подтверждения администратором ваш аккаунт будет активирован</p>
+
+            <button class="logout-btn" @click="logout">Выйти</button>
         </div>
     </div>
 
@@ -181,11 +241,7 @@ onMounted(() => {
             <button v-if="isSearchMode" @click="clearSearch" class="search-clear">✕</button>
         </div>
 
-        <div v-if="loading" class="loading">
-            <div class="spinner"></div>
-        </div>
-
-        <div v-else-if="!products.length" class="empty">
+        <div v-if="!products.length" class="empty">
             <div class="empty-icon">{{ activeTab === 'active' ? '📦' : '✅' }}</div>
             <h3>{{ activeTab === 'active' ? 'Нет активных товаров' : 'Архив пуст' }}</h3>
             <p>{{ activeTab === 'active' ? 'Добавьте свой первый трек' : 'Полученные товары появятся здесь' }}</p>
@@ -246,6 +302,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.loading-screen { min-height: 60vh; display: flex; align-items: center; justify-content: center; }
+.spinner { width: 32px; height: 32px; border: 3px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .login-required { min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .login-card { text-align: center; padding: 40px 24px; border: 1px solid #333; border-radius: 20px; max-width: 320px; }
 .login-icon { font-size: 64px; margin-bottom: 16px; }
@@ -253,6 +313,22 @@ onMounted(() => {
 .login-card p { font-size: 15px; color: #777; margin: 0 0 24px; }
 .login-btn { width: 100%; padding: 14px 24px; background: #fff; color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
 .login-btn:hover { background: #eee; }
+
+/* Activation Page */
+.activation-page { min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.activation-card { text-align: center; padding: 40px 24px; border: 1px solid #333; border-radius: 24px; max-width: 380px; width: 100%; }
+.activation-icon { font-size: 64px; margin-bottom: 20px; }
+.activation-card h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 0 0 12px; }
+.activation-card > p { font-size: 15px; color: #888; line-height: 1.6; margin: 0 0 24px; }
+.user-code { background: #111; border: 1px solid #333; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+.code-label { font-size: 14px; color: #666; }
+.code-value { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+.whatsapp-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; background: #25D366; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; color: #fff; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+.whatsapp-btn:hover { background: #20BD5A; }
+.whatsapp-btn svg { width: 22px; height: 22px; }
+.hint-text { font-size: 13px; color: #555; margin: 16px 0 24px; line-height: 1.5; }
+.logout-btn { width: 100%; padding: 14px; background: transparent; border: 1px solid #333; border-radius: 12px; color: #888; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.logout-btn:hover { background: #111; color: #fff; }
 
 .products-page { padding: 16px 0; }
 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -271,10 +347,6 @@ onMounted(() => {
 .search-box input { flex: 1; height: 44px; background: transparent; border: none; outline: none; color: #fff; font-size: 15px; }
 .search-box input::placeholder { color: #555; }
 .search-clear { background: transparent; border: none; color: #555; cursor: pointer; padding: 8px; }
-
-.loading { display: flex; justify-content: center; padding: 60px 0; }
-.spinner { width: 24px; height: 24px; border: 2px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .empty { text-align: center; padding: 60px 20px; }
 .empty-icon { font-size: 48px; margin-bottom: 16px; }

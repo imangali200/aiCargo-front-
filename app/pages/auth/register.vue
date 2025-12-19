@@ -136,7 +136,7 @@ async function postRegister() {
         if (response.data.accessToken) {
             const token = useCookie("token");
             token.value = response.data.accessToken;
-            return navigateTo("/");
+            return navigateTo("/user/me");
         }
     } catch (error) {
         errorMessage.value = "Ошибка при регистрации";
