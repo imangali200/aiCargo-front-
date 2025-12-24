@@ -83,6 +83,24 @@ function goToLogin() {
     router.push('/auth/login')
 }
 
+async function deletePost(postId: number) {
+    if (!confirm('Удалить этот пост?')) return
+    
+    try {
+        await $axios.delete(`post/${postId}`, {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        toast.success('Пост удален', { position: 'top-center' })
+        // Remove post from local state
+        if (profile.value) {
+            profile.value.posts = profile.value.posts.filter(p => p.id !== postId)
+        }
+    } catch (error: any) {
+        console.error('Delete error:', error)
+        toast.error(error.response?.data?.message || 'Ошибка при удалении', { position: 'top-center' })
+    }
+}
+
 onMounted(() => {
     if (token.value) {
         getProfile()
@@ -156,6 +174,9 @@ onMounted(() => {
             </div>
             <div v-else class="posts-list">
                 <div v-for="post in profile.posts" :key="post.id" class="post-card">
+                    <button class="delete-btn" @click="deletePost(post.id)" title="Удалить">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                     <p class="post-text">{{ post.review }}</p>
                     <a v-if="post.link" :href="post.link.startsWith('http') ? post.link : 'https://' + post.link" target="_blank" class="post-link">🔗 {{ post.link }}</a>
                     <div class="post-meta">
@@ -245,9 +266,11 @@ onMounted(() => {
 .empty-tab p { color: #555; font-size: 15px; margin: 0; }
 
 .posts-list { display: flex; flex-direction: column; gap: 16px; }
-.post-card { padding: 16px; border: 1px solid #222; border-radius: 16px; }
-.post-text { font-size: 15px; color: #fff; line-height: 1.5; margin: 0 0 8px; }
-.post-link { display: inline-block; font-size: 14px; color: #1d9bf0; text-decoration: none; margin-bottom: 8px; }
+.post-card { padding: 16px; border: 1px solid #222; border-radius: 16px; position: relative; overflow: hidden; }
+.post-text { font-size: 15px; color: #fff; line-height: 1.5; margin: 0 0 8px; padding-right: 36px; word-wrap: break-word; }
+.delete-btn { position: absolute; top: 12px; right: 12px; background: #111; border: 1px solid #333; color: #666; cursor: pointer; padding: 6px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.delete-btn:hover { color: #ff4444; border-color: #ff4444; background: rgba(255,68,68,0.1); }
+.post-link { display: block; font-size: 14px; color: #1d9bf0; text-decoration: none; margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .post-link:hover { text-decoration: underline; }
 .post-meta { display: flex; gap: 16px; font-size: 14px; color: #555; }
 </style>

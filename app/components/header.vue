@@ -1,9 +1,9 @@
 <template>
     <header class="threads-header">
         <div class="threads-header-content">
-            <router-link to="/" class="threads-logo">
+            <a href="#" @click.prevent="goToHome" class="threads-logo">
                 <img src="/images/logo.png" alt="Ai-CARGO" class="logo-img" />
-            </router-link>
+            </a>
 
             <button v-if="!isLoggedIn" @click="goToLogin" class="auth-btn">
                 Войти
@@ -19,10 +19,36 @@
 </template>
 
 <script setup lang="ts">
+import { jwtDecode } from 'jwt-decode'
+
+interface JwtPayload {
+    role: 'user' | 'admin' | 'superAdmin'
+}
+
 const router = useRouter()
 const token = useCookie('token')
 
 const isLoggedIn = computed(() => !!token.value)
+
+function goToHome() {
+    if (!token.value) {
+        router.push('/auth/login')
+        return
+    }
+    
+    try {
+        const payload = jwtDecode<JwtPayload>(token.value)
+        if (payload.role === 'admin') {
+            router.push('/admin')
+        } else if (payload.role === 'superAdmin') {
+            router.push('/superAdmin')
+        } else {
+            router.push('/user')
+        }
+    } catch {
+        router.push('/auth/login')
+    }
+}
 
 function goToLogin() {
     router.push('/auth/login')
@@ -34,11 +60,12 @@ function goToSearch() {
 </script>
 
 <style scoped>
-.threads-header { position: sticky; top: 0; z-index: 100; background: #000; border-bottom: 1px solid #222; }
-.threads-header-content { max-width: 620px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
-.threads-logo { position: absolute; left: 50%; transform: translateX(-50%); text-decoration: none; transition: opacity 0.2s; }
-.threads-logo:hover { opacity: 0.8; }
-.logo-img { height: 36px; width: auto; filter: brightness(0) invert(1); }
+.threads-header { position: sticky; top: 0; z-index: 100; background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); border-bottom: 1px solid #1a1a1a; }
+.threads-header-content { max-width: 620px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+.threads-logo { position: absolute; left: 50%; transform: translateX(-50%); text-decoration: none; transition: all 0.3s ease; }
+.threads-logo:hover { transform: translateX(-50%) scale(1.05); }
+.logo-img { height: 42px; width: auto; filter: drop-shadow(0 2px 8px rgba(255, 59, 48, 0.3)); transition: filter 0.3s ease; }
+.threads-logo:hover .logo-img { filter: drop-shadow(0 4px 16px rgba(255, 59, 48, 0.5)); }
 .auth-btn { margin-left: auto; padding: 10px 20px; background: #fff; border: none; border-radius: 10px; color: #000; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
 .auth-btn:hover { background: #e5e5e5; }
 .search-btn { margin-left: auto; width: 40px; height: 40px; background: transparent; border: none; border-radius: 50%; color: #777; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }

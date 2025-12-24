@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="tw-mb-6">
       <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
-        <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/admin">Главная</router-link>
+        <router-link class="tw-text-cyan-400 hover:tw-text-cyan-300 tw-transition-colors" to="/superAdmin">Главная</router-link>
         <span class="tw-text-white/60">→</span>
         <span class="tw-text-white/60">Импортированные треки</span>
       </div>
@@ -219,7 +219,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-    layout: 'warehouse',
+    layout: 'admin',
     middleware: 'auth'
 })
 
@@ -342,13 +342,6 @@ const getStatusStyle = (item: Product) => {
   return 'tw-bg-gray-500/20 tw-text-gray-400'
 }
 
-const getLastUpdate = (item: Product) => {
-  if (item.given_to_client) return item.given_to_client
-  if (item.aicargo) return item.aicargo
-  if (item.china_warehouse) return item.china_warehouse
-  return item.createdAt
-}
-
 const formatDate = (dateStr: string | null) => {
   if (!dateStr) return '—'
   const date = new Date(dateStr)
@@ -396,3 +389,4 @@ onMounted(() => {
   to { opacity: 1; transform: translateY(0); }
 }
 </style>
+

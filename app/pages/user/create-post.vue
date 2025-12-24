@@ -21,6 +21,8 @@ const router = useRouter()
 const profile = ref<Profile | null>(null)
 const link = ref('')
 const review = ref('')
+const photo = ref<File | null>(null)
+const photoPreview = ref<string | null>(null)
 const submitting = ref(false)
 const loading = ref(false)
 const isLoggedIn = computed(() => !!token.value)
@@ -45,6 +47,36 @@ async function getProfile() {
     }
 }
 
+function handlePhotoSelect(event: Event) {
+    const input = event.target as HTMLInputElement
+    if (input.files && input.files[0]) {
+        const file = input.files[0]
+        
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+            toast.warning('Выберите изображение', { position: 'top-center' })
+            return
+        }
+        
+        // Check file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            toast.warning('Размер фото не должен превышать 10MB', { position: 'top-center' })
+            return
+        }
+        
+        photo.value = file
+        photoPreview.value = URL.createObjectURL(file)
+    }
+}
+
+function removePhoto() {
+    photo.value = null
+    if (photoPreview.value) {
+        URL.revokeObjectURL(photoPreview.value)
+        photoPreview.value = null
+    }
+}
+
 async function createPost() {
     if (!link.value.trim()) {
         toast.warning('Введите ссылку', { position: 'top-center' })
@@ -54,16 +86,23 @@ async function createPost() {
         toast.warning('Введите отзыв', { position: 'top-center' })
         return
     }
+    if (!photo.value) {
+        toast.warning('Добавьте фото', { position: 'top-center' })
+        return
+    }
 
     submitting.value = true
     try {
-        await $axios.post('post', 
-            {
-                link: link.value.trim(),
-                review: review.value.trim()
-            },
-            { headers: { 'Authorization': `Bearer ${token.value}` } }
-        )
+        const formData = new FormData()
+        formData.append('link', link.value.trim())
+        formData.append('review', review.value.trim())
+        formData.append('photo', photo.value)
+
+        await $axios.post('post', formData, {
+            headers: {
+                'Authorization': `Bearer ${token.value}`
+            }
+        })
         toast.success('Пост опубликован!', { position: 'top-center' })
         router.push('/user')
     } catch (error: any) {
@@ -137,13 +176,26 @@ onMounted(() => {
     <div v-else class="create-page">
         <div class="create-header">
             <button @click="goBack" class="cancel-btn">Отмена</button>
-            <h1>Новый пост</h1>
-            <button @click="createPost" :disabled="submitting || !link.trim() || !review.trim()" class="submit-btn">
+            <button @click="createPost" :disabled="submitting || !link.trim() || !review.trim() || !photo" class="submit-btn">
                 {{ submitting ? '...' : 'Опубликовать' }}
             </button>
         </div>
 
         <div class="create-form">
+            <!-- Photo Upload -->
+            <div class="form-group">
+                <label>Фото</label>
+                <div v-if="!photoPreview" class="photo-upload" @click="($refs.photoInput as HTMLInputElement).click()">
+                    <input ref="photoInput" type="file" accept="image/*" @change="handlePhotoSelect" hidden />
+                    <div class="upload-icon">📷</div>
+                    <span>Нажмите, чтобы выбрать фото</span>
+                </div>
+                <div v-else class="photo-preview">
+                    <img :src="photoPreview" alt="Preview" />
+                    <button type="button" class="remove-photo" @click="removePhoto">✕</button>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Ссылка</label>
                 <input v-model="link" type="url" placeholder="https://example.com/product" class="form-input" />
@@ -204,4 +256,15 @@ onMounted(() => {
 .form-input:focus, .form-textarea:focus { border-color: #555; }
 .form-input::placeholder, .form-textarea::placeholder { color: #555; }
 .form-textarea { resize: none; font-family: inherit; line-height: 1.5; }
+
+/* Photo Upload */
+.photo-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px 20px; background: #111; border: 2px dashed #333; border-radius: 16px; cursor: pointer; transition: all 0.2s; }
+.photo-upload:hover { border-color: #555; background: #151515; }
+.upload-icon { font-size: 48px; }
+.photo-upload span { font-size: 14px; color: #666; }
+
+.photo-preview { position: relative; border-radius: 16px; overflow: hidden; }
+.photo-preview img { width: 100%; max-height: 400px; object-fit: cover; display: block; border-radius: 16px; }
+.remove-photo { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.remove-photo:hover { background: #ff4444; }
 </style>

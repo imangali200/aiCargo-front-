@@ -57,6 +57,19 @@
                     <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </div>
             </router-link>
+
+            <router-link to="/superAdmin/history" class="tw-flex tw-items-center tw-gap-4 tw-p-5 tw-bg-white/[0.03] tw-backdrop-blur-xl tw-border tw-border-white/10 tw-rounded-2xl tw-no-underline tw-transition-all tw-duration-300 hover:tw-translate-y-[-4px] hover:tw-shadow-2xl hover:tw-border-pink-500/50 hover:tw-bg-pink-500/10 group">
+                <div class="tw-w-14 tw-h-14 tw-rounded-2xl tw-bg-gradient-to-br tw-from-pink-500 tw-to-rose-500 tw-flex tw-items-center tw-justify-center tw-text-white tw-flex-shrink-0">
+                    <svg class="tw-w-7 tw-h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="tw-flex-1">
+                    <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-1">История</h3>
+                    <p class="tw-text-sm tw-text-white/50">Импортталған трек-кодтар тарихы</p>
+                </div>
+                <div class="tw-w-8 tw-h-8 tw-bg-white/5 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-text-white/40 group-hover:tw-text-white group-hover:tw-bg-white/10 tw-transition-all">
+                    <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+            </router-link>
         </div>
     </div>
 </template>

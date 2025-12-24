@@ -24,6 +24,7 @@ interface Post {
     id: number
     link: string
     review: string
+    imgUrl?: string
     likesCount: number
     isLiked?: boolean
     createAt: string
@@ -317,8 +318,20 @@ onMounted(() => {
                 class="tw-h-full tw-snap-start tw-snap-always tw-relative tw-flex tw-items-end tw-justify-center"
                 style="scroll-snap-align: start; min-height: 100vh;"
             >
-                <!-- Background gradient - FULL SCREEN -->
+                <!-- Background Image or Gradient - FULL SCREEN -->
                 <div 
+                    v-if="post.imgUrl"
+                    class="tw-absolute tw-inset-0"
+                >
+                    <img 
+                        :src="post.imgUrl" 
+                        alt="Post" 
+                        class="tw-w-full tw-h-full tw-object-cover"
+                    />
+                    <div class="tw-absolute tw-inset-0 tw-bg-gradient-to-t tw-from-black tw-via-transparent tw-to-black/50"></div>
+                </div>
+                <div 
+                    v-else
                     class="tw-absolute tw-inset-0"
                     :style="`background: linear-gradient(135deg, hsl(${(post.id * 40) % 360}, 60%, 25%), hsl(${(post.id * 40 + 60) % 360}, 60%, 15%));`"
                 ></div>
