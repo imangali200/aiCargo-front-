@@ -25,6 +25,7 @@ interface Profile {
     createAt: string
     posts: Post[]
     postLikes: Post[]
+    saved: Post | null
 }
 
 const WHATSAPP_NUMBER = "77083791496" // Замените на реальный номер
@@ -36,7 +37,7 @@ const router = useRouter()
 
 const profile = ref<Profile | null>(null)
 const loading = ref(false)
-const activeTab = ref<'posts' | 'likes'>('posts')
+const activeTab = ref<'posts' | 'likes' | 'saved'>('posts')
 const isLoggedIn = computed(() => !!token.value)
 
 const whatsappLink = computed(() => {
@@ -165,7 +166,8 @@ onMounted(() => {
 
         <div class="profile-tabs">
             <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Посты</button>
-            <button :class="{ active: activeTab === 'likes' }" @click="activeTab = 'likes'">Понравившиеся</button>
+            <button :class="{ active: activeTab === 'likes' }" @click="activeTab = 'likes'">Лайки</button>
+            <button :class="{ active: activeTab === 'saved' }" @click="activeTab = 'saved'">Сохраненное</button>
         </div>
 
         <div v-if="activeTab === 'posts'" class="tab-content">
@@ -198,6 +200,23 @@ onMounted(() => {
                     <div class="post-meta">
                         <span>♡ {{ post.likesCount }}</span>
                         <span>{{ formatDate(post.createAt) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="activeTab === 'saved'" class="tab-content">
+            <div v-if="!profile.saved" class="empty-tab">
+                <p>Нет сохраненных постов</p>
+            </div>
+            <div v-else class="posts-list">
+                <div class="post-card saved-post">
+                    <div class="saved-badge">🔖</div>
+                    <p class="post-text">{{ profile.saved.review }}</p>
+                    <a v-if="profile.saved.link" :href="profile.saved.link.startsWith('http') ? profile.saved.link : 'https://' + profile.saved.link" target="_blank" class="post-link">🔗 {{ profile.saved.link }}</a>
+                    <div class="post-meta">
+                        <span>♡ {{ profile.saved.likesCount }}</span>
+                        <span>{{ formatDate(profile.saved.createAt) }}</span>
                     </div>
                 </div>
             </div>
@@ -273,4 +292,7 @@ onMounted(() => {
 .post-link { display: block; font-size: 14px; color: #1d9bf0; text-decoration: none; margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .post-link:hover { text-decoration: underline; }
 .post-meta { display: flex; gap: 16px; font-size: 14px; color: #555; }
+
+.saved-post { position: relative; border-color: #333; background: linear-gradient(135deg, rgba(255,193,7,0.05), transparent); }
+.saved-badge { position: absolute; top: 12px; right: 12px; font-size: 18px; }
 </style>
