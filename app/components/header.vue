@@ -2,7 +2,7 @@
     <header class="threads-header">
         <div class="threads-header-content">
             <a href="#" @click.prevent="goToHome" class="threads-logo">
-                <img src="/images/logo.png" alt="Ai-CARGO" class="logo-img" />
+                <img src="/images/ai-market-logo.jpg" alt="Ai-Market" class="logo-img" />
             </a>
 
             <button v-if="!isLoggedIn" @click="goToLogin" class="auth-btn">
@@ -64,8 +64,7 @@ function goToSearch() {
 .threads-header-content { max-width: 620px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
 .threads-logo { position: absolute; left: 50%; transform: translateX(-50%); text-decoration: none; transition: all 0.3s ease; }
 .threads-logo:hover { transform: translateX(-50%) scale(1.05); }
-.logo-img { height: 42px; width: auto; filter: drop-shadow(0 2px 8px rgba(255, 59, 48, 0.3)); transition: filter 0.3s ease; }
-.threads-logo:hover .logo-img { filter: drop-shadow(0 4px 16px rgba(255, 59, 48, 0.5)); }
+.logo-img { height: 56px; width: auto; }
 .auth-btn { margin-left: auto; padding: 10px 20px; background: #fff; border: none; border-radius: 10px; color: #000; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
 .auth-btn:hover { background: #e5e5e5; }
 .search-btn { margin-left: auto; width: 40px; height: 40px; background: transparent; border: none; border-radius: 50%; color: #777; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }

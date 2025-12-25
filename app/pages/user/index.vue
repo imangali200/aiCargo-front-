@@ -91,8 +91,8 @@ async function getPosts() {
         const response = await $axios.get('post')
         const allPosts: Post[] = Array.isArray(response.data) ? response.data : [response.data]
         
-        // Debug: көру үшін
-        console.log('API posts:', allPosts)
+        // Уақыт бойынша сұрыптау - ең соңғылары бірінші
+        allPosts.sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime())
         
         // Получить ID просмотренных постов
         const seenIds = getSeenPostIds()

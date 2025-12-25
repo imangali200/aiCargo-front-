@@ -11,8 +11,8 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
-      name: 'AI Cargo',
-      short_name: 'AI Cargo',
+      name: 'Ai-Market',
+      short_name: 'Ai-Market',
       description: 'Товарларды бақылау қосымшасы',
       theme_color: '#000000',
       background_color: '#000000',
@@ -23,15 +23,15 @@ export default defineNuxtConfig({
       id: '/',
       icons: [
         {
-          src: '/images/logo.png',
+          src: '/images/ai-market-logo.jpg',
           sizes: '192x192',
-          type: 'image/png',
+          type: 'image/jpeg',
           purpose: 'any maskable'
         },
         {
-          src: '/images/logo.png',
+          src: '/images/ai-market-logo.jpg',
           sizes: '512x512',
-          type: 'image/png',
+          type: 'image/jpeg',
           purpose: 'any maskable'
         }
       ]
@@ -56,16 +56,16 @@ export default defineNuxtConfig({
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-        { name: 'apple-mobile-web-app-title', content: 'AI Cargo' },
+        { name: 'apple-mobile-web-app-title', content: 'Ai-Market' },
         { name: 'theme-color', content: '#000000' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
         { name: 'format-detection', content: 'telephone=no' }
       ],
       link: [
-        { rel: 'apple-touch-icon', href: '/images/logo.png' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/images/logo.png' },
-        { rel: 'apple-touch-icon', sizes: '167x167', href: '/images/logo.png' },
-        { rel: 'apple-touch-icon', sizes: '152x152', href: '/images/logo.png' },
+        { rel: 'apple-touch-icon', href: '/images/ai-market-logo.jpg' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/images/ai-market-logo.jpg' },
+        { rel: 'apple-touch-icon', sizes: '167x167', href: '/images/ai-market-logo.jpg' },
+        { rel: 'apple-touch-icon', sizes: '152x152', href: '/images/ai-market-logo.jpg' },
         { rel: 'manifest', href: '/manifest.webmanifest' }
       ]
     }
