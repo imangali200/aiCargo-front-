@@ -102,6 +102,40 @@ async function deletePost(postId: number) {
     }
 }
 
+// Like алып тастау
+async function unlikePost(postId: number) {
+    try {
+        await $axios.get('post/likes/' + postId, {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        toast.success('Лайк алынды', { position: 'top-center' })
+        // Remove from local state
+        if (profile.value) {
+            profile.value.postLikes = profile.value.postLikes.filter(p => p.id !== postId)
+        }
+    } catch (error: any) {
+        console.error('Unlike error:', error)
+        toast.error('Қате болды', { position: 'top-center' })
+    }
+}
+
+// Saved алып тастау
+async function unsavePost(postId: number) {
+    try {
+        await $axios.post('post/save/' + postId, {}, {
+            headers: { 'Authorization': `Bearer ${token.value}` }
+        })
+        toast.success('Сақталғаннан алынды', { position: 'top-center' })
+        // Remove from local state
+        if (profile.value) {
+            profile.value.saved = null
+        }
+    } catch (error: any) {
+        console.error('Unsave error:', error)
+        toast.error('Қате болды', { position: 'top-center' })
+    }
+}
+
 onMounted(() => {
     if (token.value) {
         getProfile()
@@ -195,6 +229,9 @@ onMounted(() => {
             </div>
             <div v-else class="posts-list">
                 <div v-for="post in profile.postLikes" :key="post.id" class="post-card">
+                    <button class="unlike-btn" @click="unlikePost(post.id)" title="Лайк алып тастау">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff3040" stroke="#ff3040" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
                     <p class="post-text">{{ post.review }}</p>
                     <a v-if="post.link" :href="post.link.startsWith('http') ? post.link : 'https://' + post.link" target="_blank" class="post-link">🔗 {{ post.link }}</a>
                     <div class="post-meta">
@@ -211,7 +248,9 @@ onMounted(() => {
             </div>
             <div v-else class="posts-list">
                 <div class="post-card saved-post">
-                    <div class="saved-badge">🔖</div>
+                    <button class="unsave-btn" @click="unsavePost(profile.saved.id)" title="Сақталғаннан алып тастау">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    </button>
                     <p class="post-text">{{ profile.saved.review }}</p>
                     <a v-if="profile.saved.link" :href="profile.saved.link.startsWith('http') ? profile.saved.link : 'https://' + profile.saved.link" target="_blank" class="post-link">🔗 {{ profile.saved.link }}</a>
                     <div class="post-meta">
@@ -295,4 +334,10 @@ onMounted(() => {
 
 .saved-post { position: relative; border-color: #333; background: linear-gradient(135deg, rgba(255,193,7,0.05), transparent); }
 .saved-badge { position: absolute; top: 12px; right: 12px; font-size: 18px; }
+
+.unlike-btn { position: absolute; top: 12px; right: 12px; background: #111; border: 1px solid #333; color: #ff3040; cursor: pointer; padding: 6px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.unlike-btn:hover { border-color: #ff3040; background: rgba(255,48,64,0.1); }
+
+.unsave-btn { position: absolute; top: 12px; right: 12px; background: #111; border: 1px solid #333; color: #ffc107; cursor: pointer; padding: 6px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.unsave-btn:hover { border-color: #ffc107; background: rgba(255,193,7,0.1); }
 </style>
